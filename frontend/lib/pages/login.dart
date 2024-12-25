@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/pages/erp_loop.dart';
 
 class LoginPage extends StatelessWidget {
+  const LoginPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,6 +47,11 @@ class LoginPage extends StatelessWidget {
                 // Add login logic here
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text('Login button pressed')),
+                  
+                );
+                 Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => ERPLoopPage()),
                 );
               },
               child: Text('Login'),

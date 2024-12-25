@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/pages/login.dart';
 import 'dart:async';
-import 'login.dart';
 
 class CoverPage extends StatefulWidget {
+  const CoverPage({super.key});
+
   @override
   _CoverPageState createState() => _CoverPageState();
 }
