@@ -1,16 +1,22 @@
 import 'package:flutter/material.dart';
-import 'pages/coverpage.dart';
+import 'package:frontend/core/constants/app_colors.dart';
+import 'package:frontend/pages/login.dart';
+import 'package:frontend/screens/splash.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(Resilify());
 }
 
-class MyApp extends StatelessWidget {
+class Resilify extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: CoverPage(),
+      title: "Resilify",
+      theme: ThemeData(primaryColor: AppColors.primaryColor),
+      home: Splash(),
+      routes: {
+        '/login': (context) => LoginPage()
+      }
     );
   }
 }
