@@ -15,10 +15,10 @@ class _SplashState extends State<Splash> {
     _navigateToLogin();
   }
 
-  // navigates to the splash screen after 3s of initialisation
+  // navigates to the splash screen after 1.5s of initialisation
   _navigateToLogin() async {
-    await Future.delayed(Duration(milliseconds: 3000), () {});
-    Navigator.pushReplacementNamed(context, '/login');
+    await Future.delayed(Duration(milliseconds: 1500), () {});
+    Navigator.pushReplacementNamed(context, '/landing');
   }
 
   @override

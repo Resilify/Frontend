@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/core/constants/app_colors.dart';
-import 'package:frontend/pages/login.dart';
+import 'package:frontend/screens/landing.dart';
+import 'package:frontend/screens/signin.dart';
+import 'package:frontend/screens/signup.dart';
 import 'package:frontend/screens/splash.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 void main() {
   runApp(Resilify());
@@ -12,10 +15,17 @@ class Resilify extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: "Resilify",
-      theme: ThemeData(primaryColor: AppColors.primaryColor),
+      theme: ThemeData(
+        primaryColor: AppColors.primaryColor,
+        textTheme: GoogleFonts.interTextTheme(
+           Theme.of(context).textTheme
+        ),
+      ),
       home: Splash(),
       routes: {
-        '/login': (context) => LoginPage()
+        '/landing': (context) => Landing(),
+        '/signin' : (context) => Signin(),
+        '/signup' : (context) => Signup(),
       }
     );
   }
