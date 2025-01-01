@@ -65,7 +65,7 @@ class Landing extends StatelessWidget {
             //sign in button
             CustomButton(
                 text: "I ALREADY HAVE AN ACCOUNT",
-                backgroundColor: Color(0xFFF3F4F6),
+                backgroundColor: AppColors.fourthColor,
                 foregroundColor: AppColors.primaryTextColor,
                 onPress: () {
                   _navigateToSignin(context);
