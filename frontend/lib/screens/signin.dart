@@ -87,7 +87,7 @@ class Signin extends StatelessWidget {
                             ),
                           ),
 
-                          // input feild
+                          // input feild for email
                           CustomTextField(
                             hintText: "Enter email",
                             validator: (value) {
@@ -117,7 +117,7 @@ class Signin extends StatelessWidget {
                             ),
                           ),
 
-                          // input feild
+                          // input feild for password
                           CustomTextField(
                               controller: passwordController,
                               validator: (value) {
@@ -155,7 +155,7 @@ class Signin extends StatelessWidget {
 
                     // text
                     Text(
-                      "OR LOGIN WITH",
+                      "OR SIGN IN WITH",
                       style: TextStyle(
                           fontWeight: FontWeight.w900,
                           color: AppColors.primaryTextColor,
