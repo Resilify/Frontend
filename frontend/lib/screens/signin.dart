@@ -13,13 +13,16 @@ class Signin extends StatelessWidget {
       print(userNameController.text);
       print(passwordController.text);
 
-      // Navigator.pushReplacementNamed(context, '/chat',
-      //     arguments: userNameController.text);
+      // Navigator.pushReplacementNamed(context, '/dashboard',)
 
       print("Login Presed");
     } else {
       print("Login unsuccessful");
     }
+  }
+
+  _signup(context) {
+    Navigator.pushNamed(context, '/signup');
   }
 
   final userNameController = TextEditingController();
@@ -84,7 +87,7 @@ class Signin extends StatelessWidget {
                             ),
                           ),
 
-                          // input feild
+                          // input feild for email
                           CustomTextField(
                             hintText: "Enter email",
                             validator: (value) {
@@ -114,7 +117,7 @@ class Signin extends StatelessWidget {
                             ),
                           ),
 
-                          // input feild
+                          // input feild for password
                           CustomTextField(
                               controller: passwordController,
                               validator: (value) {
@@ -132,7 +135,10 @@ class Signin extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         TextButton(
-                          child: Text("Forgot password?"),
+                          child: Text(
+                            "Forgot password?",
+                            style: TextStyle(fontWeight: FontWeight.w100),
+                          ),
                           onPressed: () {},
                         ),
                       ],
@@ -141,7 +147,87 @@ class Signin extends StatelessWidget {
                         text: "Sign in",
                         onPress: () {
                           signin(context);
-                        })
+                        }),
+
+                    SizedBox(
+                      height: 24,
+                    ),
+
+                    // text
+                    Text(
+                      "OR SIGN IN WITH",
+                      style: TextStyle(
+                          fontWeight: FontWeight.w900,
+                          color: AppColors.primaryTextColor,
+                          fontSize: 12),
+                      textAlign: TextAlign.center,
+                    ),
+
+                    SizedBox(
+                      height: 16,
+                    ),
+
+                    //other login options
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        InkWell(
+                          onTap: () {
+                            print("goolge");
+                          },
+                          child: Image.asset(
+                            'assets/img/google.png',
+                            height: 32,
+                          ),
+                        ),
+                        SizedBox(
+                          width: 24,
+                        ),
+                        InkWell(
+                          onTap: () {
+                            print("facebook");
+                          },
+                          child: Image.asset(
+                            'assets/img/facebook.png',
+                            height: 32,
+                          ),
+                        ),
+                        SizedBox(
+                          width: 24,
+                        ),
+                        InkWell(
+                          onTap: () {
+                            print('apple');
+                          },
+                          child: Image.asset(
+                            'assets/img/apple.png',
+                            height: 32,
+                          ),
+                        )
+                      ],
+                    ),
+
+                    // navigate to sign up
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Text(
+                          "Do not have an account?",
+                          style: TextStyle(color: AppColors.primaryTextColor),
+                        ),
+                        TextButton(
+                          child: Text(
+                            "SIGN UP",
+                            style: TextStyle(
+                                fontWeight: FontWeight.w900,
+                                color: AppColors.primaryTextColor),
+                          ),
+                          onPressed: () {
+                            _signup(context);
+                          },
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ),
