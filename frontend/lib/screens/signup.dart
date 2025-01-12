@@ -18,7 +18,7 @@ class Signup extends StatelessWidget {
       print(firstNameController.text);
       print(lastNameController.text);
 
-      // Navigator.pushReplacementNamed(context, '/dashboard',)
+      Navigator.pushReplacementNamed(context, '/home');
 
       print("Login Presed");
     } else {
@@ -225,7 +225,9 @@ class Signup extends StatelessWidget {
                                 }),
                             // text
 
-                            SizedBox(height: 12,),
+                            SizedBox(
+                              height: 12,
+                            ),
 
                             Text(
                               "OR SIGN UP WITH",
