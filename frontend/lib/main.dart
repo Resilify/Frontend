@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/core/constants/app_colors.dart';
+import 'package:frontend/screens/home.dart';
 import 'package:frontend/screens/landing.dart';
 import 'package:frontend/screens/signin.dart';
 import 'package:frontend/screens/signup.dart';
@@ -26,6 +27,7 @@ class Resilify extends StatelessWidget {
         '/landing': (context) => Landing(),
         '/signin' : (context) => Signin(),
         '/signup' : (context) => Signup(),
+        '/home' : (context) => Home()
       }
     );
   }
