@@ -18,7 +18,10 @@ class Signup extends StatelessWidget {
       print(firstNameController.text);
       print(lastNameController.text);
 
-      Navigator.pushReplacementNamed(context, '/home');
+      Navigator.pushNamedAndRemoveUntil(
+        context, '/home',
+        (Route<dynamic> route) => false,
+        );
 
       print("Login Presed");
     } else {
