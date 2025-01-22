@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/widgets/custom_app_bar.dart';
 import 'package:frontend/widgets/custom_bottom_navigation.dart';
 
 class Home extends StatefulWidget {
@@ -13,6 +14,10 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(60),
+        child: CustomAppBar(),
+      ),
       bottomNavigationBar: CustomBottomNavigationBar(
         onTap: (index) {
           setState(() {

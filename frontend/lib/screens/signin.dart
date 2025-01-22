@@ -13,7 +13,10 @@ class Signin extends StatelessWidget {
       print(userNameController.text);
       print(passwordController.text);
 
-      Navigator.pushReplacementNamed(context, '/home');
+      Navigator.pushNamedAndRemoveUntil(
+        context, '/home',
+        (Route<dynamic> route) => false,
+        );
 
       print("Login Presed");
     } else {
