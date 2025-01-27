@@ -127,6 +127,13 @@ class _ERPLoopPageState extends State<ERPLoopPage>
       _waveDisplayStartRecordController.isActive = true;
     });
 
+    Future.delayed(Duration(milliseconds: 500), () {
+      // a little delay to make sure the animation completes
+      setState(() {
+        currentState = 'recording';
+        _listeningController.isActive = true;
+      });
+    });
     if (!kIsWeb) {
       var status = await Permission.microphone
           .request(); //for android permisssion to use the mic is asked
@@ -142,14 +149,6 @@ class _ERPLoopPageState extends State<ERPLoopPage>
       _microphoneRecorder
           .start(); //for web the package takes care of asking for permission automatically
     }
-
-    Future.delayed(Duration(milliseconds: 500), () {
-      // a little delay to make sure the animation completes
-      setState(() {
-        currentState = 'recording';
-        _listeningController.isActive = true;
-      });
-    });
   }
 
   void _stopRecording() async {
