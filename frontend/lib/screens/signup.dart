@@ -12,6 +12,8 @@ class Signup extends StatelessWidget {
   final lastNameController = TextEditingController();
   final userNameController = TextEditingController();
   final passwordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
+  
 
   void signup(context) {
     if (_formkey.currentState != null && _formkey.currentState!.validate()) {
@@ -204,11 +206,13 @@ class Signup extends StatelessWidget {
 
                                       // input feild for confirm password
                                       CustomTextField(
-                                          controller: passwordController,
+                                          controller: confirmPasswordController,
                                           validator: (value) {
                                             if (value == null ||
                                                 value.isEmpty) {
                                               return "Please re-enter your password";
+                                            } else if (value != passwordController.text) {
+                                              return "Passwords do not match";
                                             }
                                             return null;
                                           },
