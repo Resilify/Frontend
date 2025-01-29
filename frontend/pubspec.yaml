@@ -33,7 +33,14 @@ dependencies:
   pie_timer:
     git:
       url: https://github.com/sehansi-9/pie_timer.git
-      ref: main  
+      ref: main
+  duration_time_picker:
+    git:
+      url: https://github.com/sehansi-9/duration_time_picker.git
+      ref: master
+
+    
+       
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -46,7 +53,7 @@ dependencies:
   path_provider: ^2.1.5
   path: ^1.9.0
   google_fonts: ^4.0.4
- # pie_timer: ^1.2.0 
+  #duration_time_picker: ^1.0.1
   
 
 

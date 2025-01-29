@@ -8,6 +8,7 @@ import 'dart:io'; //to access files
 import 'package:microphone/microphone.dart'; //to record in web
 import 'package:permission_handler/permission_handler.dart'; //to get mic permission
 import "package:pie_timer/pie_timer.dart";
+import "package:duration_time_picker/duration_time_picker.dart";
 
 class ERPLoopPage extends StatefulWidget {
   //stateful widget because the animations change
@@ -35,7 +36,7 @@ class _ERPLoopPageState extends State<ERPLoopPage>
   late PieAnimationController _pieAnimationController;
   DateTime? _startTime; // Track the start time
   Duration _elapsedTime = Duration.zero; // Track elapsed time
-
+  Duration _duration = const Duration(hours: 0, minutes: 0);
   bool hasRecording = false;
   bool isTalking = false;
   bool freeze = false;
@@ -46,14 +47,21 @@ class _ERPLoopPageState extends State<ERPLoopPage>
   @override
   void initState() {
     super.initState();
-    _eyeBlinkController = SimpleAnimation('blinking'); // eye blinking animation always playing
-    _talkingController = SimpleAnimation('talking',autoplay: false); //talking animation off initially
+    _eyeBlinkController =
+        SimpleAnimation('blinking'); // eye blinking animation always playing
+    _talkingController = SimpleAnimation('talking',
+        autoplay: false); //talking animation off initially
     _micController = SimpleAnimation('idle'); // shows the microphone icon
-    _waveDisplayStartRecordController = SimpleAnimation('start record',autoplay: false); // the transition animation from mic to waves
-    _listeningController = SimpleAnimation('recording',autoplay: false); // waves animation of listening (listening simulation)
-    _binDisplayEndRecordController = SimpleAnimation('end record',autoplay:false); // transition animation from waves to bin (end record simulation)
-    _deleteRecordController = SimpleAnimation('delete',autoplay:
- false); //transition animation from bin to mic (deleting simulation)
+    _waveDisplayStartRecordController = SimpleAnimation('start record',
+        autoplay: false); // the transition animation from mic to waves
+    _listeningController = SimpleAnimation('recording',
+        autoplay: false); // waves animation of listening (listening simulation)
+    _binDisplayEndRecordController = SimpleAnimation('end record',
+        autoplay:
+            false); // transition animation from waves to bin (end record simulation)
+    _deleteRecordController = SimpleAnimation('delete',
+        autoplay:
+            false); //transition animation from bin to mic (deleting simulation)
 
     _audioPlayer = AudioPlayer();
     _microphoneRecorder = MicrophoneRecorder()..init();
@@ -83,7 +91,7 @@ class _ERPLoopPageState extends State<ERPLoopPage>
         //for web
         await _audioPlayer.setUrl(_microphoneRecorder.value.recording!.url);
       }
-        _audioPlayer.setPitch(1.4);
+      _audioPlayer.setPitch(1.4);
       _audioPlayer.play();
       await Future.delayed(Duration(
           seconds: 1)); // delaying a bit before the animation is played
@@ -243,7 +251,7 @@ class _ERPLoopPageState extends State<ERPLoopPage>
               duration: const Duration(minutes: 1),
               radius: 55, // Adjust radius for the size of the pie
               fillColor: const Color.fromARGB(255, 186, 149, 207),
-              pieColor: const Color.fromARGB(255, 221, 214, 214),
+              pieColor: const Color.fromARGB(255, 208, 184, 223),
               borderColor: const Color.fromARGB(255, 116, 55, 165),
               borderWidth: 3,
               shadowColor: Colors.black,
@@ -301,6 +309,24 @@ class _ERPLoopPageState extends State<ERPLoopPage>
                   ),
                 ),
               ),
+              // Duration Picker
+              SizedBox(
+                  height: 150,
+                  width: 150,
+                  child: DurationTimePicker(
+                    onChange: (value) {
+                      _duration = value;
+                      print(_duration);
+                      setState(() {});
+                    },
+                    duration: _duration,
+                    circleColor: const Color.fromARGB(255, 179, 144, 206)
+                        .withOpacity(0.5),
+                    progressColor:
+                        const Color.fromARGB(255, 116, 55, 165).withOpacity(1),
+                    backgroundColor: const Color.fromARGB(255, 210, 200, 214)
+                        .withOpacity(0.5),
+                  )),
               // Looping Button
               ElevatedButton(
                 onPressed: freeze || isTalking || !hasRecording
