@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/screens/dashboard.dart';
 import 'package:frontend/widgets/custom_app_bar.dart';
 import 'package:frontend/widgets/custom_bottom_navigation.dart';
+import 'package:frontend/screens/erp_loop.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -17,6 +18,8 @@ class _HomeState extends State<Home> {
     Text("screen2"),
     Text("screen3"),
     Text("screen4"),
+    ERPLoopPage()
+
   ];
 
   @override

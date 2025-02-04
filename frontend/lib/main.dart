@@ -6,6 +6,7 @@ import 'package:frontend/screens/signin.dart';
 import 'package:frontend/screens/signup.dart';
 import 'package:frontend/screens/splash.dart';
 import 'package:frontend/screens/erp_loop.dart';
+import 'package:frontend/screens/victory.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 void main() {
@@ -29,7 +30,8 @@ class Resilify extends StatelessWidget {
         '/signin' : (context) => Signin(),
         '/signup' : (context) => Signup(),
         '/home' : (context) => Home(),
-        '/erp_loop' : (context) => ERPLoopPage()
+        '/erp_loop' : (context) => ERPLoopPage(),
+        '/victory' : (context) => Victory()
       }
     );
   }

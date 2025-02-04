@@ -18,10 +18,9 @@ class ERPLoopPage extends StatefulWidget {
   _ERPLoopPageState createState() => _ERPLoopPageState();
 }
 
-class _ERPLoopPageState extends State<ERPLoopPage>
-    with TickerProviderStateMixin {
-  late RiveAnimationController
-      _eyeBlinkController; //animation controller for mascot
+class _ERPLoopPageState extends State<ERPLoopPage> with TickerProviderStateMixin {
+
+  late RiveAnimationController _eyeBlinkController; //animation controller for mascot
   late RiveAnimationController _talkingController;
   late RiveAnimationController _micController; //mic animation controllers
   late RiveAnimationController _waveDisplayStartRecordController;
@@ -32,38 +31,31 @@ class _ERPLoopPageState extends State<ERPLoopPage>
   late MicrophoneRecorder _microphoneRecorder; //web voice recording controller
   late AudioPlayer _audioPlayer; //audio playback controller
   var record = AudioRecorder(); //android voice recording controller
-
   late PieAnimationController _pieAnimationController; //timer controller
   DateTime? _startTime; //start time of the timer
   Duration _elapsedTime = Duration.zero; //elapsed time of the timer
-  Duration _duration = const Duration(
-      hours: 0, minutes: 20); //starting time of the timer (default: 20 minutes)
+  Duration _duration = const Duration(hours: 0, minutes: 20); //starting time of the timer (default: 20 minutes)
   bool hasRecording = false;
   bool isTalking = false;
-  bool freeze = false;
+  bool hide = false;
   bool _isTimerInitialized = false;
 
-  String currentState =
-      'idle'; //at the start, the state is idle for mic animation
+  String currentState ='idle'; //at the start, the state is idle for mic animation
   String? recordingPath;
 
   @override
   void initState() {
     super.initState();
-    _eyeBlinkController =
-        SimpleAnimation('blinking'); //eye blinking animation always playing
+    _eyeBlinkController = SimpleAnimation('blinking'); //eye blinking animation always playing
     _talkingController = SimpleAnimation('talking', autoplay: false);
     _micController = SimpleAnimation('idle');
-    _waveDisplayStartRecordController =
-        SimpleAnimation('start record', autoplay: false);
+    _waveDisplayStartRecordController = SimpleAnimation('start record', autoplay: false);
     _listeningController = SimpleAnimation('recording', autoplay: false);
-    _binDisplayEndRecordController =
-        SimpleAnimation('end record', autoplay: false);
+    _binDisplayEndRecordController = SimpleAnimation('end record', autoplay: false);
     _deleteRecordController = SimpleAnimation('delete', autoplay: false);
 
     _audioPlayer = AudioPlayer(); //initialize audio player
-    _microphoneRecorder = MicrophoneRecorder()
-      ..init(); //initialize web voice recorder
+    _microphoneRecorder = MicrophoneRecorder()..init(); //initialize web voice recorder
   }
 
   @override
@@ -74,7 +66,7 @@ class _ERPLoopPageState extends State<ERPLoopPage>
 
   _playRecording() async {
     setState(() {
-      freeze = true;
+      hide = true;
     });
 
     if (!_isTimerInitialized) {
@@ -161,8 +153,7 @@ class _ERPLoopPageState extends State<ERPLoopPage>
       final path = '${directory.path}/myFile.m4a';
       await record.start(const RecordConfig(), path: path);
     } else {
-      _microphoneRecorder
-          .start(); //for web voice recording, microphone package directly asks permmission and starts recording
+      _microphoneRecorder.start(); //for web voice recording, permmission asked directly by package
     }
   }
 
@@ -203,10 +194,8 @@ class _ERPLoopPageState extends State<ERPLoopPage>
 
         setState(() {
           currentState = 'idle';
-          _micController =
-              SimpleAnimation('idle'); // re-initialize mic animation
-          _microphoneRecorder = MicrophoneRecorder()
-            ..init(); // re-initialize web recorder
+          _micController = SimpleAnimation('idle'); // re-initialize mic animation
+          _microphoneRecorder = MicrophoneRecorder()..init(); // re-initialize web recorder
           record = AudioRecorder(); // re-initialize android recorder
         });
         _pieAnimationController.resetAnim?.call(); //resetting timer to default
@@ -251,7 +240,7 @@ Widget build(BuildContext context) {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         SizedBox(
-          height: 60,
+          height: 40,
           width: 70,
           child: _isTimerInitialized
               ? PieTimer(
@@ -272,14 +261,14 @@ Widget build(BuildContext context) {
                   ),
                   isReverse: false,
                   enableTouchControls: false,
-                  onCompleted: () => {},
+                  onCompleted: () => {Navigator.pushNamed(context, '/victory')},
                   onDismissed: () => {},
                 )
               : Container(),
         ),
-        // Adjust mascot size based on `freeze`
+        // Adjust mascot size based on `hide`
         SizedBox(
-          height: freeze ? 500 : 350, // Increase mascot size when frozen
+          height: hide ? 450 : 350, // Increase mascot size when frozen
           child: RiveAnimation.asset(
             'assets/mascot_animation.riv',
             controllers: [_eyeBlinkController, _talkingController],
@@ -288,9 +277,9 @@ Widget build(BuildContext context) {
             },
           ),
         ),
-        // Hide controls when freeze == true
+        // Hide controls when hide == true
         Visibility(
-          visible: !freeze,
+          visible: !hide,
           child: Column(
             children: [
               Row(
@@ -300,7 +289,7 @@ Widget build(BuildContext context) {
                     height: 100,
                     width: 100,
                     child: GestureDetector(
-                      onTap: freeze ? null : _handleTap,
+                      onTap: hide ? null : _handleTap,
                       child: RiveAnimation.asset(
                         'assets/record_animation.riv',
                         controllers: [
@@ -321,41 +310,26 @@ Widget build(BuildContext context) {
                     width: 150,
                     child: DurationTimePicker(
                       onChange: (value) {
-                        if (!freeze) {
+                        if (!hide) {
                           setState(() {
                             _duration = value;
                           });
                         }
                       },
                       duration: _duration,
-                      circleColor: const Color.fromARGB(255, 179, 144, 206)
-                          .withOpacity(0.5),
-                      progressColor:
-                          const Color.fromARGB(255, 116, 55, 165).withOpacity(1),
-                      backgroundColor:
-                          const Color.fromARGB(255, 210, 200, 214).withOpacity(0.5),
+                      circleColor: const Color.fromARGB(255, 179, 144, 206).withOpacity(0.5),
+                      progressColor:const Color.fromARGB(255, 57, 17, 132).withOpacity(1),
+                      backgroundColor:const Color.fromARGB(255, 210, 200, 214).withOpacity(0.5),
                     ),
                   ),
-                  ElevatedButton(
-                    onPressed: freeze ||
-                            isTalking ||
-                            !hasRecording ||
-                            _duration == Duration.zero
-                        ? null
-                        : _playRecording,
-                    child: const Text('Start Looping'),
-                  ),
-                ],
+                  SizedBox(
+                height: 20,
+                width: 20,
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Looped Time: ${_elapsedTime.inSeconds} seconds',
-                    style: const TextStyle(
-                      fontSize: 20,
-                      color: Color.fromARGB(255, 99, 77, 133),
-                    ),
+                  ElevatedButton(
+                    onPressed: hide || isTalking || !hasRecording || _duration == Duration.zero 
+                    ? null : _playRecording,
+                    child: const Text('Loop!'),
                   ),
                 ],
               ),
