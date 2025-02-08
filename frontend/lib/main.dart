@@ -16,6 +16,7 @@ void main() {
 class Resilify extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    
     return MaterialApp(
       title: "Resilify",
       theme: ThemeData(

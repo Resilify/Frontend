@@ -112,7 +112,12 @@ flutter:
     - assets/img/logo_2.png
     - assets/img/google.png
     - assets/img/mascot.png
-    - assets/mascot_animation.riv
-    - assets/record_animation.riv
-    - assets/game_achievement_badge.riv
+    - assets/img/dashboard1.png
+    - assets/img/dashboard2.png
+    - assets/img/dashboard3.png
+    - assets/img/dashboard4.png
+    - assets/animations/mascot_animation.riv
+    - assets/animations/record_animation.riv
+    - assets/animations/game_achievement_badge.riv
+    - assets/sounds/victory.mp3
     

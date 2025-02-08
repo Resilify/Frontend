@@ -27,27 +27,30 @@ class _ERPLoopPageState extends State<ERPLoopPage> with TickerProviderStateMixin
   late RiveAnimationController _listeningController;
   late RiveAnimationController _binDisplayEndRecordController;
   late RiveAnimationController _deleteRecordController;
+  bool isTalking = false;
+
+  String currentState ='idle'; //at the start, the state is idle for mic animation
 
   late MicrophoneRecorder _microphoneRecorder; //web voice recording controller
   late AudioPlayer _audioPlayer; //audio playback controller
   var record = AudioRecorder(); //android voice recording controller
+  bool hasRecording = false;
+  String? recordingPath;
+
   late PieAnimationController _pieAnimationController; //timer controller
   DateTime? _startTime; //start time of the timer
   Duration _elapsedTime = Duration.zero; //elapsed time of the timer
   Duration _duration = const Duration(hours: 0, minutes: 20); //starting time of the timer (default: 20 minutes)
-  bool hasRecording = false;
-  bool isTalking = false;
-  bool hide = false;
   bool _isTimerInitialized = false;
-
-  String currentState ='idle'; //at the start, the state is idle for mic animation
-  String? recordingPath;
+  bool hide = false;
+  
 
   @override
   void initState() {
     super.initState();
     _eyeBlinkController = SimpleAnimation('blinking'); //eye blinking animation always playing
     _talkingController = SimpleAnimation('talking', autoplay: false);
+
     _micController = SimpleAnimation('idle');
     _waveDisplayStartRecordController = SimpleAnimation('start record', autoplay: false);
     _listeningController = SimpleAnimation('recording', autoplay: false);
@@ -77,9 +80,10 @@ class _ERPLoopPageState extends State<ERPLoopPage> with TickerProviderStateMixin
       _isTimerInitialized = true;
     }
     await Future.delayed(
-        Duration(seconds: 1)); //delay to show the timer animation
+        Duration(seconds: 1)); //delay to show the timer animation appear
 
     _startTimer(); // Start the timer animation
+
     while (_elapsedTime < _duration) {
       //while the set duration is met
       if (!kIsWeb) {
@@ -90,7 +94,7 @@ class _ERPLoopPageState extends State<ERPLoopPage> with TickerProviderStateMixin
         await _audioPlayer.setUrl(_microphoneRecorder.value.recording!.url);
       }
 
-      _audioPlayer.setPitch(1.4); //setting pitch
+      _audioPlayer.setPitch(1.4); //setting pitch (works only on android)
       _audioPlayer.play(); //starting audio playback
 
       //when the set duration is met, pause the audio and stop the talking animation
@@ -108,7 +112,7 @@ class _ERPLoopPageState extends State<ERPLoopPage> with TickerProviderStateMixin
       _startTalking();
 
       await _audioPlayer.playerStateStream.firstWhere((playerState) =>
-          playerState.processingState == ProcessingState.completed);
+          playerState.processingState == ProcessingState.completed); //waiting for the audioplayer to complete one cycle
 
       _stopTalking();
 
@@ -117,7 +121,7 @@ class _ERPLoopPageState extends State<ERPLoopPage> with TickerProviderStateMixin
 
       setState(() {
         _elapsedTime = DateTime.now().difference(_startTime!);
-      }); //elapsed time is calculated throughout the session
+      }); //elapsed time is calculated after each cycle
     }
     
     _pauseTimer();
@@ -136,13 +140,13 @@ class _ERPLoopPageState extends State<ERPLoopPage> with TickerProviderStateMixin
     setState(() {
       currentState = 'start record';
       _waveDisplayStartRecordController.isActive = true;
-    }); //to change the mic animation to start record
+    }); //transition animation from mic to recording waves
 
     Future.delayed(Duration(milliseconds: 500), () {
       setState(() {
         currentState = 'recording';
         _listeningController.isActive = true;
-      }); //to change the mic animation to recording
+      }); //animation of recording waves
     });
     if (!kIsWeb) {
       var status = await Permission.microphone.request();
@@ -167,21 +171,21 @@ class _ERPLoopPageState extends State<ERPLoopPage> with TickerProviderStateMixin
         hasRecording = false;
       }
     } else {
-      _microphoneRecorder.stop(); //for web
+      _microphoneRecorder.stop(); //for web it automatically saves the recording in a blob url
       hasRecording = true;
     }
 
     setState(() {
       currentState = 'end record';
-      _binDisplayEndRecordController.isActive = true;
+      _binDisplayEndRecordController.isActive = true; //transition animation from recording waves to bin
     });
   }
 
   void _deleteRecording() {
     setState(() {
       currentState = 'delete';
-      _deleteRecordController.isActive = true;
-      hasRecording = false; //changing mic animations
+      _deleteRecordController.isActive = true; // transition animation from bin to mic (idle)
+      hasRecording = false; 
 
       // Wait for the delete animation to complete before resetting
       Future.delayed(Duration(milliseconds: 800), () async {
@@ -194,13 +198,10 @@ class _ERPLoopPageState extends State<ERPLoopPage> with TickerProviderStateMixin
 
         setState(() {
           currentState = 'idle';
-          _micController = SimpleAnimation('idle'); // re-initialize mic animation
-          _microphoneRecorder = MicrophoneRecorder()..init(); // re-initialize web recorder
-          record = AudioRecorder(); // re-initialize android recorder
+          _micController = SimpleAnimation('idle'); // re-initialize mic animation as this rive animation follows a sequence in a state machine
+          _microphoneRecorder = MicrophoneRecorder()..init(); // re-initialize web recorder after calling stop function
+          record = AudioRecorder(); // re-initialize android recorder after calling dispose
         });
-        _pieAnimationController.resetAnim?.call(); //resetting timer to default
-        _pauseTimer();
-        _elapsedTime = Duration.zero;
       });
     });
   }
@@ -236,10 +237,10 @@ Widget build(BuildContext context) {
   return Scaffold(
     appBar: AppBar(title: Text('ERP Loop Taping')),
     backgroundColor: const Color.fromARGB(255, 224, 213, 236),
-    body: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        SizedBox(
+    body: Column( //main column
+      mainAxisAlignment: MainAxisAlignment.center, // is centered
+      children: [ //that centered main column has children
+        SizedBox( //timer widget only renderes if the timer is initialized
           height: 40,
           width: 70,
           child: _isTimerInitialized
@@ -264,13 +265,13 @@ Widget build(BuildContext context) {
                   onCompleted: () => {Navigator.pushNamed(context, '/victory')},
                   onDismissed: () => {},
                 )
-              : Container(),
+              : Container(), //else an empty container
         ),
         // Adjust mascot size based on `hide`
         SizedBox(
-          height: hide ? 450 : 350, // Increase mascot size when frozen
+          height: hide ? 450 : 350, // Increase mascot size when when inputs and commands are hidden and loop starts
           child: RiveAnimation.asset(
-            'assets/mascot_animation.riv',
+            'assets/animations/mascot_animation.riv',
             controllers: [_eyeBlinkController, _talkingController],
             onInit: (artboard) {
               artboard.addController(_eyeBlinkController);
@@ -279,11 +280,11 @@ Widget build(BuildContext context) {
         ),
         // Hide controls when hide == true
         Visibility(
-          visible: !hide,
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+          visible: !hide, //visible when it's not hidden
+          child: Column( // a column for the controls
+            children: [ //that column has children
+              Row( //which are in a row
+                mainAxisAlignment: MainAxisAlignment.center, 
                 children: [
                   SizedBox(
                     height: 100,
@@ -291,7 +292,7 @@ Widget build(BuildContext context) {
                     child: GestureDetector(
                       onTap: hide ? null : _handleTap,
                       child: RiveAnimation.asset(
-                        'assets/record_animation.riv',
+                        'assets/animations/record_animation.riv',
                         controllers: [
                           _micController,
                           _waveDisplayStartRecordController,
@@ -316,19 +317,19 @@ Widget build(BuildContext context) {
                           });
                         }
                       },
-                      duration: _duration,
+                      duration: _duration, //the picked value is set in the middle of the picker
                       circleColor: const Color.fromARGB(255, 179, 144, 206).withOpacity(0.5),
                       progressColor:const Color.fromARGB(255, 57, 17, 132).withOpacity(1),
                       backgroundColor:const Color.fromARGB(255, 210, 200, 214).withOpacity(0.5),
                     ),
                   ),
-                  SizedBox(
+                  SizedBox( //whitespace
                 height: 20,
                 width: 20,
               ),
                   ElevatedButton(
-                    onPressed: hide || isTalking || !hasRecording || _duration == Duration.zero 
-                    ? null : _playRecording,
+                    onPressed: hide || !hasRecording || _duration == Duration.zero //button is disabled when the loop is running, no recording is available or duration picked is zero
+                    ? null : _playRecording, //or else the loop begins ( when both duration and voice input are available)
                     child: const Text('Loop!'),
                   ),
                 ],
@@ -340,5 +341,4 @@ Widget build(BuildContext context) {
     ),
   );
 }
-
 }
