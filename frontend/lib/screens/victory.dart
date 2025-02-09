@@ -30,8 +30,15 @@ void initState() {
     _open = SimpleAnimation('open', autoplay: false);
     _glare = SimpleAnimation('Glare Open', autoplay: true);
     _shining = SimpleAnimation('Loop', autoplay: true);
+    _navigateToHome();
     
 }
+
+_navigateToHome() async {
+    await Future.delayed(Duration(milliseconds: 10000), () {});
+    audioPlayer.stop();
+    Navigator.pushReplacementNamed(context, '/home');
+  }
 
 @override
 Widget build(BuildContext context) {

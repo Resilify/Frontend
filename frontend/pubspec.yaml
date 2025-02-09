@@ -119,5 +119,7 @@ flutter:
     - assets/animations/mascot_animation.riv
     - assets/animations/record_animation.riv
     - assets/animations/game_achievement_badge.riv
+    - assets/animations/game_over.riv
     - assets/sounds/victory.mp3
+    - assets/sounds/rain.mp3
     
