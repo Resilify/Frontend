@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/core/constants/app_colors.dart';
 import 'package:frontend/widgets/custom_button.dart';
+import 'package:frontend/widgets/custom_label.dart';
 import 'package:frontend/widgets/text_field.dart';
 
 class Signin extends StatelessWidget {
@@ -80,15 +81,9 @@ class Signin extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+
                           // text
-                          Text(
-                            "Email",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.primaryTextColor,
-                            ),
-                          ),
+                          CustomLabel(text: "Email"),
 
                           // input feild for email
                           CustomTextField(
@@ -111,14 +106,7 @@ class Signin extends StatelessWidget {
                           ),
 
                           // text
-                          Text(
-                            "Password",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.primaryTextColor,
-                            ),
-                          ),
+                          CustomLabel(text: "Password"),
 
                           // input feild for password
                           CustomTextField(

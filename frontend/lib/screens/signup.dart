@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/core/constants/app_colors.dart';
 import 'package:frontend/widgets/custom_button.dart';
+import 'package:frontend/widgets/custom_label.dart';
 import 'package:frontend/widgets/text_field.dart';
 
 class Signup extends StatelessWidget {
@@ -10,7 +11,7 @@ class Signup extends StatelessWidget {
 
   final firstNameController = TextEditingController();
   final lastNameController = TextEditingController();
-  final userNameController = TextEditingController();
+  final emailNameController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
   
@@ -86,14 +87,7 @@ class Signup extends StatelessWidget {
                                         CrossAxisAlignment.start,
                                     children: [
                                       // text
-                                      Text(
-                                        "First Name",
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                          color: AppColors.primaryTextColor,
-                                        ),
-                                      ),
+                                      CustomLabel(text: "First Name"),
 
                                       // input feild for first name
                                       CustomTextField(
@@ -112,14 +106,7 @@ class Signup extends StatelessWidget {
                                       ),
 
                                       // text
-                                      Text(
-                                        "Last Name",
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                          color: AppColors.primaryTextColor,
-                                        ),
-                                      ),
+                                      CustomLabel(text: "Last Name"),
 
                                       // input feild for last name
                                       CustomTextField(
@@ -138,14 +125,7 @@ class Signup extends StatelessWidget {
                                       ),
 
                                       // text
-                                      Text(
-                                        "Email",
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                          color: AppColors.primaryTextColor,
-                                        ),
-                                      ),
+                                      CustomLabel(text: "Email"),
 
                                       // input feild for email
                                       CustomTextField(
@@ -160,7 +140,7 @@ class Signup extends StatelessWidget {
                                           }
                                           return null;
                                         },
-                                        controller: userNameController,
+                                        controller: emailNameController,
                                       ),
 
                                       SizedBox(
@@ -168,14 +148,7 @@ class Signup extends StatelessWidget {
                                       ),
 
                                       // text
-                                      Text(
-                                        "Password",
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                          color: AppColors.primaryTextColor,
-                                        ),
-                                      ),
+                                      CustomLabel(text: "Password"),
 
                                       // input feild for password
                                       CustomTextField(
@@ -195,14 +168,7 @@ class Signup extends StatelessWidget {
                                       ),
 
                                       // text
-                                      Text(
-                                        "Confirm Password",
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                          color: AppColors.primaryTextColor,
-                                        ),
-                                      ),
+                                      CustomLabel(text: "Confirm Password"),
 
                                       // input feild for confirm password
                                       CustomTextField(
