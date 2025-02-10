@@ -33,8 +33,8 @@ class CustomBottomNavigationBar extends StatelessWidget {
           label: "Stats",
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.newspaper_rounded),
-          label: "News",
+          icon: Icon(Icons.sports_esports_rounded),
+          label: "Games",
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.person_rounded),

@@ -33,8 +33,13 @@ dependencies:
   pie_timer:
     git:
       url: https://github.com/sehansi-9/pie_timer.git
-      ref: main  
+      ref: main
+  duration_time_picker:
+    git:
+      url: https://github.com/sehansi-9/duration_time_picker.git
+      ref: master
 
+    
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
@@ -45,12 +50,7 @@ dependencies:
   record: ^5.2.0
   path_provider: ^2.1.5
   path: ^1.9.0
-  google_fonts: ^4.0.4
- # pie_timer: ^1.2.0 
-  
-
-
-
+  google_fonts: ^4.0.4  
 
 dev_dependencies:
   flutter_test:
@@ -112,6 +112,14 @@ flutter:
     - assets/img/logo_2.png
     - assets/img/google.png
     - assets/img/mascot.png
-    - assets/mascot_animation.riv
-    - assets/record_animation.riv
+    - assets/img/dashboard1.png
+    - assets/img/dashboard2.png
+    - assets/img/dashboard3.png
+    - assets/img/dashboard4.png
+    - assets/animations/mascot_animation.riv
+    - assets/animations/record_animation.riv
+    - assets/animations/game_achievement_badge.riv
+    - assets/animations/game_over.riv
+    - assets/sounds/victory.mp3
+    - assets/sounds/rain.mp3
     

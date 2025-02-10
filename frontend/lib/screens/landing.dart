@@ -6,7 +6,7 @@ class Landing extends StatelessWidget {
   const Landing({super.key});
 
   _navigateToSignin(context) {
-    Navigator.pushNamed(context, '/signin');
+    Navigator.pushNamed(context, '/erp_loop');
   }
 
   _navigateToSignup(context) {
