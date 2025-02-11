@@ -25,7 +25,7 @@ class Landing extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // image
-            Container(height: 215, child: Image.asset('assets/img/mascot.png')),
+            SizedBox(height: 215, child: Image.asset('assets/img/mascot.png')),
 
             // title
             Text(

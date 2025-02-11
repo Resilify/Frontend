@@ -2,7 +2,7 @@ name: frontend
 description: "medical app for ocd patients"
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
@@ -33,24 +33,25 @@ dependencies:
   pie_timer:
     git:
       url: https://github.com/sehansi-9/pie_timer.git
-      ref: main  
+      ref: main
+  duration_time_picker:
+    git:
+      url: https://github.com/sehansi-9/duration_time_picker.git
+      ref: master
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
   rive: ^0.13.20
-  microphone : ^0.1.0
+  microphone: ^0.1.0
   just_audio: ^0.9.42
   permission_handler: ^10.2.0
   record: ^5.2.0
   path_provider: ^2.1.5
   path: ^1.9.0
   google_fonts: ^4.0.4
- # pie_timer: ^1.2.0 
-  
-
-
-
+  image_picker: ^1.1.2
+  # pie_timer: ^1.2.0
 
 dev_dependencies:
   flutter_test:
@@ -68,7 +69,6 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
-
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
@@ -106,12 +106,6 @@ flutter:
   # see https://flutter.dev/to/font-from-package
 
   assets:
-    - assets/img/logo.jpeg
-    - assets/img/apple.png
-    - assets/img/facebook.png
-    - assets/img/logo_2.png
-    - assets/img/google.png
-    - assets/img/mascot.png
-    - assets/mascot_animation.riv
-    - assets/record_animation.riv
-    
+    - assets/img/
+    - assets/animations/
+    - assets/sounds/

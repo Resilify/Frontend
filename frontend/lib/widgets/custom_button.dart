@@ -11,12 +11,12 @@ class CustomButton extends StatelessWidget {
   static const Color _defaultForegroundColor = Colors.white; // Black text
 
   const CustomButton({
-    Key? key,
+    super.key,
     required this.text,
     this.backgroundColor = _defaultBackgroundColor, // Default value
     this.foregroundColor = _defaultForegroundColor, // Default value
     required this.onPress,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

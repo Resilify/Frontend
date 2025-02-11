@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/core/constants/app_colors.dart';
 import 'package:frontend/screens/dashboard.dart';
+import 'package:frontend/screens/profile.dart';
 import 'package:frontend/widgets/custom_app_bar.dart';
 import 'package:frontend/widgets/custom_bottom_navigation.dart';
 
@@ -12,24 +14,22 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   int myIndex = 0;
-  List<Widget> screenList = const [
+  List<Widget> screenList = [
     Dashboard(),
     Text("screen2"),
     Text("screen3"),
-    Text("screen4"),
+    Profile()
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.secondaryColor,
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(60),
         child: CustomAppBar(),
       ),
-      body: Padding(
-      padding: const EdgeInsets.all(16.0),
-      child:  screenList[myIndex],
-      ),
+      body: screenList[myIndex],
       bottomNavigationBar: CustomBottomNavigationBar(
         onTap: (index) {
           setState(() {
