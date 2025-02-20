@@ -6,6 +6,7 @@ class CustomTextField extends StatefulWidget {
   final String hintText;
   final FormFieldValidator<String>? validator;
   final bool hasAsteriks;
+  final int maxLines; //  Adding a parameter
 
   const CustomTextField({
     super.key,
@@ -13,6 +14,7 @@ class CustomTextField extends StatefulWidget {
     required this.hintText,
     this.validator,
     this.hasAsteriks = false,
+    this.maxLines = 1, // Default value added
   });
 
   @override
@@ -33,6 +35,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
       },
       controller: widget.controller,
       obscureText: widget.hasAsteriks ? !_isPasswordVisible : false,
+      maxLines: widget.maxLines, 
       decoration: InputDecoration(
         hintText: widget.hintText,
         hintStyle: TextStyle(color: AppColors.primaryColor),
