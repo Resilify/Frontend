@@ -7,47 +7,45 @@ class GameOver extends StatefulWidget {
   _GameOverState createState() => _GameOverState();
 }
 
-class _GameOverState extends  State<GameOver> {
+class _GameOverState extends State<GameOver> {
+  late RiveAnimationController _rain;
+  AudioPlayer audioPlayer = AudioPlayer();
 
-late RiveAnimationController _rain; //idle animation
-
-
- AudioPlayer audioPlayer = AudioPlayer();
-
-
-@override
-void initState() {
+  @override
+  void initState() {
     super.initState();
     audioPlayer.setAsset('assets/sounds/rain.mp3');
     audioPlayer.play();
-    _rain = SimpleAnimation('rain', autoplay: true); 
-    _navigateToHome(); 
-    
-}
-_navigateToHome() async {
+    _rain = SimpleAnimation('rain', autoplay: true);
+    _navigateToHome();
+  }
+
+  _navigateToHome() async {
     await Future.delayed(Duration(milliseconds: 17000), () {});
+    _goToHome();
+  }
+
+  void _goToHome() {
     audioPlayer.stop();
     Navigator.pushReplacementNamed(context, '/home');
   }
 
-@override
-Widget build(BuildContext context) {
-  return Scaffold(
-    body: Center(
-      child: Expanded(
-        child: RiveAnimation.asset(
-          'assets/animations/game_over.riv',
-          controllers: [_rain],
-          fit: BoxFit.cover, 
+  @override
+  Widget build(BuildContext context) {
+    return WillPopScope(
+      onWillPop: () async {
+        _goToHome(); // Ensure back button only navigates to home
+        return false; // Prevent default back button behavior
+      },
+      child: Scaffold(
+        body: Center(
+          child: RiveAnimation.asset(
+            'assets/animations/game_over.riv',
+            controllers: [_rain],
+            fit: BoxFit.cover,
+          ),
         ),
       ),
-    ),
-  );
+    );
+  }
 }
-
-
-
-
-}
-
-
