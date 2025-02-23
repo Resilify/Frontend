@@ -1,11 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/core/constants/app_colors.dart';
 
 Future<bool> showExitConfirmationDialog(
     BuildContext context, VoidCallback onExit) async {
   return await showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: const Text("Confirm Exit"),
+          title: Text(
+                      "Confirm Exit",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.primaryTextColor,
+                      ),
+              ),
           content: const Text("Are you sure you want to exit?"),
           actions: [
             TextButton(

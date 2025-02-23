@@ -23,11 +23,21 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             children: [
               Text("15", style: TextStyle(color: AppColors.primaryTextColor)),
               SizedBox(width: 4),
-              Icon(Icons.local_fire_department, color: Colors.green),
+              Image.asset(
+                'assets/img/streak.png',
+                height: 30,
+                width: 30,
+              ),
+              //Icon(Icons.local_fire_department, color: Colors.green),
               SizedBox(width: 10),
               Text("280", style: TextStyle(color: AppColors.primaryTextColor)),
               SizedBox(width: 4),
-              Icon(Icons.monetization_on, color: Colors.green),
+              Image.asset(
+                'assets/img/star.png',
+                height: 33,
+                width: 33,
+              ),
+              //Icon(Icons.monetization_on, color: Colors.green),
             ],
           ),
         ],

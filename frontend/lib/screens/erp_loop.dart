@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart'; // to check the platform either web/android
 import 'package:flutter/material.dart'; //ui
+import 'package:frontend/core/constants/app_colors.dart';
 import 'package:just_audio/just_audio.dart'; //for audio playback
 import 'package:record/record.dart'; // android voice recording
 import 'package:rive/rive.dart'; //animations
@@ -213,6 +214,7 @@ class _ERPLoopPageState extends State<ERPLoopPage> with TickerProviderStateMixin
   
   @override
   Widget build(BuildContext context) {
+     final double screenWidth = MediaQuery.of(context).size.width;
     return WillPopScope(
       onWillPop: () async {
         if (gameStarted) {//if game has started
@@ -240,8 +242,16 @@ class _ERPLoopPageState extends State<ERPLoopPage> with TickerProviderStateMixin
                             _audioPlayer.pause(),
                             _stopTalking(),
                             Navigator.pushNamed(context, '/victory'),
-                          },)
-                  : Container(),
+                          },
+                    )
+                  : Text(
+                      "Tap on the mic and speak what's on your mind!",
+                      style: TextStyle(
+                        fontSize: screenWidth * 0.035,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.primaryTextColor,
+                      ),
+              ),
             ),
             MascotWidget(gameStarted: gameStarted, controllers: [_eyeBlinkController, _talkingController]),
             Visibility(
@@ -265,8 +275,12 @@ class _ERPLoopPageState extends State<ERPLoopPage> with TickerProviderStateMixin
                       ),
                       SizedBox(height: 20, width: 20),
                       ElevatedButton(
-                        onPressed: !hasRecording || _duration == Duration.zero ? null : _startGame,
-                        child: const Text('Loop!'),),
+                        onPressed: !hasRecording || _duration == Duration.zero? null: _startGame,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor:  Color.fromARGB(255, 100, 62, 172).withOpacity(1), 
+                          foregroundColor: Colors.white, ),
+                        child: const Text('Loop!'),
+                      )
                     ],
                   ),
                 ],),
