@@ -9,12 +9,13 @@ import 'dart:io'; //to access files in android env
 import 'package:microphone/microphone.dart'; // web voice recording
 import 'package:permission_handler/permission_handler.dart'; //to get mic permission
 import "package:pie_timer/pie_timer.dart"; //timer widget
-import "package:frontend/widgets/duration_picker.dart";
+import "package:frontend/widgets/duration_picker.dart"; //customised duration picker widget
+import 'dart:async'; //for balloon appearing timers
 import "package:frontend/widgets/exit_confirmation_dialogue.dart";
 import "package:frontend/widgets/timer.dart"; //customised timer widget
 import "package:frontend/widgets/microphone.dart"; //customised mic widget
-import "package:frontend/widgets/mascot.dart";
-
+import "package:frontend/widgets/mascot.dart"; //mascot widget
+import 'package:frontend/widgets/balloon.dart'; //balloon widget
 class ERPLoopPage extends StatefulWidget {//stateful bc the animations and widgets change states
   const ERPLoopPage({super.key});
   @override
@@ -28,6 +29,8 @@ class _ERPLoopPageState extends State<ERPLoopPage> with TickerProviderStateMixin
   late RiveAnimationController _listeningController;
   late RiveAnimationController _binDisplayEndRecordController;
   late RiveAnimationController _deleteRecordController;
+  late RiveAnimationController _balloonFloat; //balloon animation controllers
+  late RiveAnimationController _balloonPop;
   bool isTalking = false;
   String currentState ='idle'; //at the start, the state is idle for mic animation
   late MicrophoneRecorder _microphoneRecorder; //web voice recording controller
@@ -38,12 +41,14 @@ class _ERPLoopPageState extends State<ERPLoopPage> with TickerProviderStateMixin
   late PieAnimationController _pieAnimationController; //timer controller
   DateTime? _startTime; //start time of the timer
   Duration _elapsedTime = Duration.zero; //elapsed time of the timer
-  DateTime? _pauseStartTime;
+  DateTime? _pauseStartTime; //starting time to calculate pause duration if user tries to go back mid game
   Duration _pauseDuration = Duration.zero;
+  bool paused = false; //game state
   Duration _duration = const Duration(hours: 0, minutes: 20); //default start time of the timer
-  bool _isTimerInitialized = false;
   bool gameStarted = false; //game state
-
+  bool balloonVisible = false;
+  Timer? _timer; //timer for balloon appearing
+  
   @override
   void initState() {
     super.initState();
@@ -56,6 +61,8 @@ class _ERPLoopPageState extends State<ERPLoopPage> with TickerProviderStateMixin
     _deleteRecordController = SimpleAnimation('delete', autoplay: false);
     _audioPlayer = AudioPlayer(); //initialize audio player
     _microphoneRecorder = MicrophoneRecorder()..init(); //initialize web voice recorder
+    _balloonFloat = SimpleAnimation('Idle');
+    _balloonPop = SimpleAnimation('Plop', autoplay: false);
   }
 
   @override
@@ -64,16 +71,18 @@ class _ERPLoopPageState extends State<ERPLoopPage> with TickerProviderStateMixin
     super.dispose();
   }
 
-  void _startRecording() async {
+  void _updateMicState(String newState) {
     setState(() {
-      currentState = 'start record';
-      _waveDisplayStartRecordController.isActive = true;
-    }); //transition animation from mic to recording waves
+      currentState = newState;
+    });
+  }
+
+  void _startRecording() async {
+    _updateMicState('start record');
+     _waveDisplayStartRecordController.isActive = true; //transition animation from mic to recording waves
     Future.delayed(Duration(milliseconds: 500), () {
-      setState(() {
-        currentState = 'recording';
-        _listeningController.isActive = true;
-      }); //animation of recording waves
+     _updateMicState('recording');
+     _listeningController.isActive = true; //animation of recording waves
     });
     if (!kIsWeb) {
       var status = await Permission.microphone.request();
@@ -84,8 +93,7 @@ class _ERPLoopPageState extends State<ERPLoopPage> with TickerProviderStateMixin
       final path = '${directory.path}/myFile.m4a';
       await record.start(const RecordConfig(), path: path);
     } else {
-      _microphoneRecorder
-          .start(); //for web voice recording, permmission asked directly by package
+      _microphoneRecorder.start(); //for web voice recording, permmission asked directly by package
     }
   }
 
@@ -102,63 +110,35 @@ class _ERPLoopPageState extends State<ERPLoopPage> with TickerProviderStateMixin
       _microphoneRecorder.stop(); //for web it automatically saves the recording in a blob url
       hasRecording = true;
     }
-    setState(() {
-      currentState = 'end record';
-      _binDisplayEndRecordController.isActive = true; //transition animation from recording waves to bin
-    });
+    _updateMicState('end record');
+    _binDisplayEndRecordController.isActive = true; //transition animation from recording waves to bin
   }
 
   void _deleteRecording() {
-    setState(() {
-      currentState = 'delete';
+    _updateMicState('delete');
       _deleteRecordController.isActive = true; // transition animation from bin to mic (idle)
       hasRecording = false;
-      // Wait for the delete animation to complete before resetting
-      Future.delayed(Duration(milliseconds: 800), () async {
+      Future.delayed(Duration(milliseconds: 800), () async { // Wait for the delete animation to complete before resetting
         if (!kIsWeb) {
           await record.cancel();
           record.dispose();
-        } 
-        else {
+        } else {
           _microphoneRecorder.stop();
         }
-        setState(() {
-          currentState = 'idle';
+        _updateMicState('idle');
           _micController = SimpleAnimation('idle'); // re-initialize mic animation 
           _microphoneRecorder = MicrophoneRecorder()..init(); // re-initialize web recorder after calling stop function
           record = AudioRecorder(); // re-initialize android recorder after calling dispose
-        });
       });
-    });
   }
 
-  _startGame() async {
-    setState(() {
-      gameStarted = true; //game starts
-    });
-    if (!_isTimerInitialized) {//initialize timer controller
-      _pieAnimationController = PieAnimationController(
-        vsync: this,
-      );
-      _isTimerInitialized = true;
-    }
-    await Future.delayed(Duration(seconds: 1)); //delay to show the timer animation appear
-    _startTimer(); // Start the timer animation
-    while (_elapsedTime < _duration) {  //while the set duration is met
-      if (!kIsWeb) {  //if android
-        await _audioPlayer.setFilePath(recordingPath!);
-      } 
-      else {//for web
-        await _audioPlayer.setUrl(_microphoneRecorder.value.recording!.url);
-      }
-      _audioPlayer.setPitch(1.4); //setting pitch (works only on android)
-      _audioPlayer.play(); //starting audio playback
-      await Future.delayed(Duration(milliseconds:500)); // minor delay for the animation to start playing
-      _startTalking();
-      await _audioPlayer.playerStateStream.firstWhere((playerState) =>
-          playerState.processingState == ProcessingState.completed); //waiting for the audioplayer to complete one cycle
-      _stopTalking();
-
+  void _handleTap() {//for mic animation state controlling
+    if (currentState == 'idle') {
+      _startRecording();
+    } else if (currentState == 'recording') {
+      _stopRecording();
+    } else if (currentState == 'end record') {
+      _deleteRecording();
     }
   }
 
@@ -185,8 +165,76 @@ class _ERPLoopPageState extends State<ERPLoopPage> with TickerProviderStateMixin
     });
   }
 
+  void _balloonPopping() { //balloon popping animation triggers
+    setState(() {
+      _balloonPop.isActive = true;
+      Future.delayed(Duration(milliseconds: 800), () { //delaying so that the animation completes before the balloon widget disappears
+        setState(() {
+          balloonVisible = false;
+        });
+      });
+    });
+  }
+  
+  void _balloonTap() { //ontap controller for balloon widget
+    if (balloonVisible = true) {
+      _balloonPopping();
+    } 
+  }
+
+  _startGame() async {//initialize timer controller only when the game starts to prevent the rebuilding of the widget with each time picking state
+      _pieAnimationController = PieAnimationController(
+        vsync: this,);
+      setState(() {
+      gameStarted = true; //game starts
+    });
+    
+    await Future.delayed(Duration(seconds: 1)); //delay to show the timer animation appear
+    _startTimer(); // Start the timer animation
+    _timer = Timer.periodic(Duration(seconds: 20), (timer) { // a periodic timer to show the balloon widget
+    if (!gameStarted) { //if user exits the game, the timer is cancelled
+          timer.cancel();
+          return; }
+      setState(() async {
+        balloonVisible = true;
+        if(balloonVisible && !paused){ //if the balloon is visible and game is not paused
+        await Future.delayed(Duration(seconds: 12)); //waiting for the user to pop the balloon
+        if(!gameStarted){
+          timer.cancel();
+          return;
+        }
+        if (balloonVisible) { //if the balloon is not popped in 12 seconds, game over
+          timer.cancel();
+          _pauseGame(); 
+          _elapsedTime = DateTime.now().difference(_startTime!);
+          Navigator.pushNamed(context, '/game_over'); 
+        }}
+        return;
+      });
+    });
+    while (_elapsedTime < _duration) {//while the set duration is met
+      if (!kIsWeb) {//if android
+        await _audioPlayer.setFilePath(recordingPath!);
+      } else { //for web
+        await _audioPlayer.setUrl(_microphoneRecorder.value.recording!.url);
+      }
+      _audioPlayer.setPitch(1.4); //setting pitch (works only on android)
+      _audioPlayer.play(); //starting audio playback
+      await Future.delayed(Duration(milliseconds: 500)); // minor delay for the animation to start playing
+      _startTalking();
+      await _audioPlayer.playerStateStream.firstWhere((playerState) =>
+          playerState.processingState ==ProcessingState.completed); //waiting for the audioplayer to complete one cycle
+      _stopTalking();
+    }
+  }
+
   void _pauseGame(){ //pause game when back button is pressed and confimation box is shown
      _pauseTimer();
+     _stopTalking();
+     setState(() { 
+      balloonVisible= false;
+      paused = true; //prevents the appearance of the balloon widget while game is paused
+    });
      _audioPlayer.pause();
      _pauseStartTime = DateTime.now(); //starting a pause timer incase user resumes back to game
     _elapsedTime = DateTime.now().difference(_startTime!); //recording the elapsed time if user exits the game
@@ -199,19 +247,13 @@ class _ERPLoopPageState extends State<ERPLoopPage> with TickerProviderStateMixin
     });
     print(_elapsedTime);
     _pieAnimationController.startAnim?.call(); //resuming timer
+    _startTalking();
     _audioPlayer.play(); //resuming audio player
+     setState(() { 
+      paused = false; 
+    });
   }
 
-   void _handleTap() {//for mic animation state controlling
-    if (currentState == 'idle') {
-      _startRecording();
-    } else if (currentState == 'recording') {
-      _stopRecording();
-    } else if (currentState == 'end record') {
-      _deleteRecording();
-    }
-  }
-  
   @override
   Widget build(BuildContext context) {
      final double screenWidth = MediaQuery.of(context).size.width;
@@ -234,13 +276,16 @@ class _ERPLoopPageState extends State<ERPLoopPage> with TickerProviderStateMixin
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SizedBox(
-              child: _isTimerInitialized
+              child: gameStarted
                   ? PieTimerWidget(
                       pieAnimationController: _pieAnimationController,
                       duration: _duration,
                       onCompleted: () => {
                             _audioPlayer.pause(),
                             _stopTalking(),
+                            setState(() {
+                              gameStarted = false;
+                            }),
                             Navigator.pushNamed(context, '/victory'),
                           },
                     )
@@ -253,7 +298,9 @@ class _ERPLoopPageState extends State<ERPLoopPage> with TickerProviderStateMixin
                       ),
               ),
             ),
-            MascotWidget(gameStarted: gameStarted, controllers: [_eyeBlinkController, _talkingController]),
+            SizedBox(height: 40, width: 20),
+           Balloon(balloonVisible: balloonVisible, onTap: _balloonTap, controllers: [_balloonFloat, _balloonPop], ),
+           MascotWidget(gameStarted: gameStarted, controllers: [_eyeBlinkController, _talkingController]),
             Visibility(
               visible: !gameStarted,
               child: Column(
@@ -281,8 +328,7 @@ class _ERPLoopPageState extends State<ERPLoopPage> with TickerProviderStateMixin
                           foregroundColor: Colors.white, ),
                         child: const Text('Loop!'),
                       )
-                    ],
-                  ),
+                    ],),
                 ],),
             ),
           ],),
