@@ -3,6 +3,8 @@ import 'package:rive/rive.dart';
 import 'package:just_audio/just_audio.dart';
 
 class GameOver extends StatefulWidget {
+  const GameOver({super.key});
+
   @override
   _GameOverState createState() => _GameOverState();
 }

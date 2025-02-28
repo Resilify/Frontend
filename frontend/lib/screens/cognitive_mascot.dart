@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 class CognitiveMascotPage extends StatelessWidget {
   final String reframedThought;
-  CognitiveMascotPage({required this.reframedThought});
+  const CognitiveMascotPage({super.key, required this.reframedThought});
 
   @override
   Widget build(BuildContext context) {

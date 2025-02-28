@@ -3,6 +3,8 @@ import 'package:rive/rive.dart';
 import 'package:just_audio/just_audio.dart';
 
 class Victory extends StatefulWidget {
+  const Victory({super.key});
+
   @override
   _VictoryState createState() => _VictoryState();
 }
