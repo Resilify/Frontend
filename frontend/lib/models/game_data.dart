@@ -20,7 +20,7 @@ class GameData extends HiveObject {
 
   GameData copyWith({DateTime? timePlayed, int? duration, int? points}) {
     return GameData(
-      gameId: this.gameId,
+      gameId: gameId,
       timePlayed: timePlayed ?? this.timePlayed,
       duration: duration ?? this.duration,
       points: points ?? this.points,

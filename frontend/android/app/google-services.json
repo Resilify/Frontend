@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "176944736107",
+    "firebase_url": "https://resilify-flaskbe-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "resilify-flaskbe",
+    "storage_bucket": "resilify-flaskbe.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:176944736107:android:7588f76898596196b70e2e",
+        "android_client_info": {
+          "package_name": "lk.iit.frontend"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBypi1l62rWeqcasZdCYhiGr1zNAyT7f7c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

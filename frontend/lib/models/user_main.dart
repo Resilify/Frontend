@@ -18,7 +18,7 @@ class UserMain extends HiveObject {
   // Copy method for updating specific fields
   UserMain copyWith({String? email, String? phoneNumber}) {
     return UserMain(
-      userId: this.userId,
+      userId: userId,
       email: email ?? this.email,
       phoneNumber: phoneNumber ?? this.phoneNumber,
     );

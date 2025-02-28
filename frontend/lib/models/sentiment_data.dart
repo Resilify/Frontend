@@ -20,8 +20,8 @@ class SentimentData extends HiveObject {
 
   SentimentData copyWith({double? score, String? prompt}) {
     return SentimentData(
-      sentimentId: this.sentimentId,
-      time: this.time,
+      sentimentId: sentimentId,
+      time: time,
       score: score ?? this.score,
       prompt: prompt ?? this.prompt,
     );
