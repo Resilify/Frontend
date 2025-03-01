@@ -1,3 +1,4 @@
+import 'package:frontend/models/UserDTO.dart';
 import 'package:hive/hive.dart';
 
 part 'user_main.g.dart';
@@ -5,22 +6,36 @@ part 'user_main.g.dart';
 @HiveType(typeId: 0)
 class UserMain extends HiveObject {
   @HiveField(0)
-  String userId;
+  String uid; // Firebase UID stored in Hive
 
   @HiveField(1)
-  String email;
+  String firstName;
 
   @HiveField(2)
-  String phoneNumber;
+  String lastName;
 
-  UserMain({required this.userId, required this.email, required this.phoneNumber});
+  UserMain({
+    required this.uid,
+    required this.firstName,
+    required this.lastName,
+  });
 
-  // Copy method for updating specific fields
-  UserMain copyWith({String? email, String? phoneNumber}) {
+  // Convert DTO to Hive Model
+  factory UserMain.fromDTO(String uid, UserDTO dto) {
     return UserMain(
-      userId: userId,
-      email: email ?? this.email,
-      phoneNumber: phoneNumber ?? this.phoneNumber,
+      uid: uid,
+      firstName: dto.firstName,
+      lastName: dto.lastName,
+    );
+  }
+
+  get userId => null;
+
+  UserMain copyWith({required String firstName, required String lastName}) {
+    return UserMain(
+      uid: this.uid,
+      firstName: firstName,
+      lastName: lastName,
     );
   }
 }

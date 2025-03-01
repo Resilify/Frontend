@@ -17,9 +17,9 @@ class UserMainAdapter extends TypeAdapter<UserMain> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return UserMain(
-      userId: fields[0] as String,
-      email: fields[1] as String,
-      phoneNumber: fields[2] as String,
+      uid: fields[0] as String,
+      firstName: fields[1] as String,
+      lastName: fields[2] as String,
     );
   }
 
@@ -28,11 +28,11 @@ class UserMainAdapter extends TypeAdapter<UserMain> {
     writer
       ..writeByte(3)
       ..writeByte(0)
-      ..write(obj.userId)
+      ..write(obj.uid)
       ..writeByte(1)
-      ..write(obj.email)
+      ..write(obj.firstName)
       ..writeByte(2)
-      ..write(obj.phoneNumber);
+      ..write(obj.lastName);
   }
 
   @override

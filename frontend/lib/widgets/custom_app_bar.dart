@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:frontend/core/constants/app_colors.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const CustomAppBar({super.key});
+  final TextEditingController firstNameController = TextEditingController();
+
+  CustomAppBar({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +18,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             children: [
               Icon(Icons.person, color: AppColors.primaryTextColor),
               SizedBox(width: 8),
-              Text("Hello User!", style: TextStyle(color: AppColors.primaryTextColor)),
+              Text("Hello ${firstNameController.text}", style: TextStyle(color: AppColors.primaryTextColor)),
             ],
           ),
           Row(

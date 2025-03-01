@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:frontend/models/UserDTO.dart';
+import 'package:frontend/services/hive_service.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:frontend/core/constants/app_colors.dart';
 import 'package:frontend/widgets/custom_button.dart';
 import 'package:frontend/widgets/custom_label.dart';
 import 'package:frontend/widgets/text_field.dart';
-import 'package:path/path.dart';
 
 class Signup extends StatelessWidget {
   Signup({super.key});
@@ -20,32 +20,44 @@ class Signup extends StatelessWidget {
   final confirmPasswordController = TextEditingController();
 
   // Firebase Email/Password Signup Method
-  Future<void> signup(BuildContext context) async {
-    if (_formkey.currentState != null && _formkey.currentState!.validate()) {
-      try {
-        UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email: emailNameController.text.trim(),
-          password: passwordController.text.trim(),
+
+Future<void> signup(BuildContext context) async {
+  if (_formkey.currentState != null && _formkey.currentState!.validate()) {
+    try {
+      UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: emailNameController.text.trim(),
+        password: passwordController.text.trim(),
+      );
+
+      User? user = userCredential.user;
+      if (user != null) {
+        await user.updateDisplayName("${firstNameController.text} ${lastNameController.text}");
+        print("User signed up successfully: ${user.email}");
+
+        // 🔹 Store First & Last Name with Firebase UID
+        String uid = user.uid; // Get Firebase UID
+        UserDTO userDTO = UserDTO(
+          firstName: firstNameController.text,
+          lastName: lastNameController.text,
         );
 
-        User? user = userCredential.user;
-        if (user != null) {
-          await user.updateDisplayName("${firstNameController.text} ${lastNameController.text}");
-          print("User signed up successfully: ${user.email}");
+        await HiveService().saveUser(uid, userDTO);
+        print("User data stored in Hive with UID: $uid");
 
-          // Navigate to Home Page
-          Navigator.pushNamedAndRemoveUntil(context, '/home', (Route<dynamic> route) => false);
-        }
-      } on FirebaseAuthException catch (e) {
-        print("Signup error: ${e.message}");
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Error: ${e.message}"))
-        );
+        // Navigate to Home Page
+        Navigator.pushNamedAndRemoveUntil(context, '/home', (Route<dynamic> route) => false);
       }
-    } else {
-      print("Signup validation failed.");
+    } on FirebaseAuthException catch (e) {
+      print("Signup error: ${e.message}");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error: ${e.message}"))
+      );
     }
+  } else {
+    print("Signup validation failed.");
   }
+}
+
 
   void _signin(BuildContext context) {
     Navigator.pushNamed(context, '/signin');
@@ -91,7 +103,8 @@ class Signup extends StatelessWidget {
   }
 }
 
-
+/////////////////////////////////////////////////////////
+ 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
