@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/core/constants/app_colors.dart';
 import 'package:rive/rive.dart';
 import 'package:just_audio/just_audio.dart';
 
@@ -39,11 +40,22 @@ _navigateToHome() async {
     audioPlayer.stop();
     Navigator.pushReplacementNamed(context, '/home');
   }
+  
+  void _goToHome() {
+    audioPlayer.stop();
+    Navigator.pushReplacementNamed(context, '/home');
+  }
 
-@override
-Widget build(BuildContext context) {
-  return Scaffold(
-    body: Center(
+  @override
+  Widget build(BuildContext context) {
+    return WillPopScope(
+      onWillPop: () async {
+        _goToHome(); // Ensure back button only navigates to home
+        return false; // Prevent default back button behavior
+      },
+      child: Scaffold(
+        backgroundColor: AppColors.primaryColor.withOpacity(0.7),
+        body: Center(
       child: Expanded(
         child: RiveAnimation.asset(
           'assets/animations/game_achievement_badge.riv',
@@ -52,12 +64,12 @@ Widget build(BuildContext context) {
         ),
       ),
     ),
-  );
+      ),
+    );
+  }
 }
 
 
 
-
-}
 
 

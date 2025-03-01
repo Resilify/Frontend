@@ -11,11 +11,27 @@ class Dashboard extends StatelessWidget {
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: const [
-            DashboardBox(
-                imagePath: "assets/img/dashboard1.png", label: "resturcturing"),
-            DashboardBox(
-                imagePath: "assets/img/dashboard2.png", label: "loop tape"),
+          children: [
+            GestureDetector(
+              onTap: () {
+                Navigator.pushNamed(context,
+                    '/cognitive_input'); // navigate to restructuring page
+              },
+              child: DashboardBox(
+                imagePath: "assets/img/dashboard1.png",
+                label: "restructuring",
+              ),
+            ),
+            GestureDetector(
+              onTap: () {
+                Navigator.pushNamed(
+                    context, '/erp_loop'); // navigate to erp loop page
+              },
+              child: DashboardBox(
+                imagePath: "assets/img/dashboard2.png",
+                label: "loop tape",
+              ),
+            ),
           ],
         ),
         const SizedBox(height: 16),
@@ -31,8 +47,4 @@ class Dashboard extends StatelessWidget {
       ],
     );
   }
-} 
-
-
-
-
+}
