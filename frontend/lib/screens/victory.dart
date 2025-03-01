@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/core/constants/app_colors.dart';
 import 'package:rive/rive.dart';
 import 'package:just_audio/just_audio.dart';
 
@@ -53,6 +54,7 @@ _navigateToHome() async {
         return false; // Prevent default back button behavior
       },
       child: Scaffold(
+        backgroundColor: AppColors.primaryColor.withOpacity(0.7),
         body: Center(
       child: Expanded(
         child: RiveAnimation.asset(

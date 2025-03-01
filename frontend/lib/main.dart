@@ -6,6 +6,7 @@ import 'package:frontend/screens/landing.dart';
 import 'package:frontend/screens/signin.dart';
 import 'package:frontend/screens/signup.dart';
 import 'package:frontend/screens/splash.dart';
+import 'package:frontend/screens/streak.dart';
 import 'package:frontend/screens/victory.dart';
 import 'package:frontend/screens/game_over.dart';
 import 'package:frontend/screens/cognitive_input.dart';
@@ -40,13 +41,11 @@ class Resilify extends StatelessWidget {
         '/erp_loop' : (context) => ERPLoopPage(),
         '/victory' : (context) => Victory(),
         '/game_over' : (context) => GameOver(),
+        '/streak':(context) => Streak(),
         // Cognitive Restructuring Routes
         '/cognitive_input': (context) => CognitiveInputPage(),
         '/cognitive_reframed': (context) => CognitiveReframedPage(userInput: ""), // Providing empty input for now
         '/cognitive_mascot': (context) => CognitiveMascotPage(reframedThought: ""), // Providing empty input for now
-
-        
-
       }
     );
   }
