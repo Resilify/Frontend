@@ -33,7 +33,7 @@ class UserMain extends HiveObject {
 
   UserMain copyWith({required String firstName, required String lastName}) {
     return UserMain(
-      uid: this.uid,
+      uid: uid,
       firstName: firstName,
       lastName: lastName,
     );

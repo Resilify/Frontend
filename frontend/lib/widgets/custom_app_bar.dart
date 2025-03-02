@@ -1,10 +1,36 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:frontend/core/constants/app_colors.dart';
+import 'package:frontend/models/user_main.dart';
 
-class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
-  final TextEditingController firstNameController = TextEditingController();
+class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
+  const CustomAppBar({super.key});
 
-  CustomAppBar({super.key});
+  @override
+  _CustomAppBarState createState() => _CustomAppBarState();
+
+  @override
+  Size get preferredSize => const Size.fromHeight(60);
+}
+
+class _CustomAppBarState extends State<CustomAppBar> {
+  String firstName = "User !"; // Default name if Hive data is empty
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserName(); // Fetch latest name from Hive
+  }
+
+  Future<void> _loadUserName() async {
+    var userBox = Hive.box<UserMain>('user_main');
+
+    if (userBox.isNotEmpty) {
+      setState(() {
+        firstName = userBox.values.last.firstName; // Get latest added name
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,26 +43,23 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           Row(
             children: [
               Icon(Icons.person, color: AppColors.primaryTextColor),
-              SizedBox(width: 8),
-              Text("Hello ${firstNameController.text}", style: TextStyle(color: AppColors.primaryTextColor)),
+              const SizedBox(width: 8),
+              Text("Hello $firstName", style: TextStyle(color: AppColors.primaryTextColor)),
             ],
           ),
           Row(
             children: [
               Text("15", style: TextStyle(color: AppColors.primaryTextColor)),
-              SizedBox(width: 4),
-              Icon(Icons.local_fire_department, color: Colors.green),
-              SizedBox(width: 10),
+              const SizedBox(width: 4),
+              const Icon(Icons.local_fire_department, color: Colors.green),
+              const SizedBox(width: 10),
               Text("280", style: TextStyle(color: AppColors.primaryTextColor)),
-              SizedBox(width: 4),
-              Icon(Icons.monetization_on, color: Colors.green),
+              const SizedBox(width: 4),
+              const Icon(Icons.monetization_on, color: Colors.green),
             ],
           ),
         ],
       ),
     );
   }
-
-  @override
-  Size get preferredSize => Size.fromHeight(60); //  Required fix for app bar
 }
