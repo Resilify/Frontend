@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'services/hive_service.dart';
+import 'services/auth_service.dart';
 import 'core/constants/app_colors.dart';
 import 'screens/splash.dart';
 import 'screens/landing.dart';
@@ -43,9 +45,29 @@ void main() async {
   runApp(const Resilify());
 }
 
-
-class Resilify extends StatelessWidget {
+class Resilify extends StatefulWidget {
   const Resilify({super.key});
+
+  @override
+  State<Resilify> createState() => _ResilifyState();
+}
+
+class _ResilifyState extends State<Resilify> {
+  final AuthService _authService = AuthService();
+  bool _isLoading = true;
+  
+  @override
+  void initState() {
+    super.initState();
+    // Simulates splash screen timing while checking auth state
+    Future.delayed(const Duration(seconds: 2), () {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,9 +77,25 @@ class Resilify extends StatelessWidget {
         primaryColor: AppColors.primaryColor,
         textTheme: GoogleFonts.interTextTheme(Theme.of(context).textTheme),
       ),
-      initialRoute: '/',
+      home: _isLoading 
+          ? Splash() 
+          : StreamBuilder<User?>(
+              stream: _authService.authStateChanges,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.active) {
+                  User? user = snapshot.data;
+                  if (user == null) {
+                    // User is not logged in
+                    return Landing();
+                  }
+                  // User is logged in
+                  return Home();
+                }
+                // Checking auth state
+                return Splash();
+              },
+            ),
       routes: {
-        '/': (context) => Splash(),
         '/landing': (context) => Landing(),
         '/signin': (context) => Signin(),
         '/signup': (context) => Signup(),
@@ -72,48 +110,3 @@ class Resilify extends StatelessWidget {
     );
   }
 }
-
-// Testing code for Firebase Authentication
-// Uncomment to test Firebase Auth
-/*
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  
-  await Firebase.initializeApp();
-  await Hive.initFlutter();
-  await HiveService.initHive();
-
-  // Test Firebase Authentication
-  try {
-    import 'package:firebase_auth/firebase_auth.dart';
-    UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
-      email: "test@example.com",
-      password: "password123",
-    );
-    print("Firebase Auth Test - Signed in: ${userCredential.user?.uid}");
-  } catch (e) {
-    print("Firebase Auth Test - Error: $e");
-  }
-
-  runApp(const Resilify());
-}
-*/
-
-// Testing code for Hive
-// Uncomment to test Hive
-/*
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  
-  await Firebase.initializeApp();
-  await Hive.initFlutter();
-  await HiveService.initHive();
-
-  // Test Hive
-  HiveService hiveService = HiveService();
-  await hiveService.insertTestData();
-  hiveService.retrieveTestData();
-
-  runApp(const Resilify());
-}
-*/

@@ -3,7 +3,6 @@ import 'package:hive/hive.dart';
 import '../models/user_main.dart';
 import '../models/game_data.dart';
 import '../models/sentiment_data.dart';
-// import '../models/user_dto.dart';
 
 class HiveService {
   /// Initialize Hive and register adapters
@@ -21,41 +20,64 @@ class HiveService {
   Future<void> saveUser(String uid, UserDTO userDTO) async {
     var userBox = Hive.box<UserMain>('user_main');
     
-    // Store only First & Last Name with UID
-    var user = UserMain(
-      uid: uid, 
-      firstName: userDTO.firstName, 
-      lastName: userDTO.lastName,
-    );
+    // Check if user already exists
+    UserMain? existingUser = userBox.get(uid);
     
-    userBox.put(uid, user);
-    print("✅ User stored DONE ! : FirstName>${user.firstName} LastName>${user.lastName}, UID > $uid");
+    if (existingUser != null) {
+      // Update existing user
+      existingUser.firstName = userDTO.firstName;
+      existingUser.lastName = userDTO.lastName;
+      userBox.put(uid, existingUser);
+    } else {
+      // Create new user
+      var user = UserMain(
+        uid: uid, 
+        firstName: userDTO.firstName, 
+        lastName: userDTO.lastName,
+      );
+      userBox.put(uid, user);
+    }
+    
+    print("✅ User stored: FirstName>${userDTO.firstName} LastName>${userDTO.lastName}, UID > $uid");
   }
 
-  /// Retrieve stored Firebase UID
-  // String? getUID() {
-  //   var userBox = Hive.box<UserMain>('user_main');
-  //   if (userBox.isNotEmpty) {
-  //     return userBox.values.first.uid; // Get first stored UID
-  //   }
-  //   return null;
-  // }
+  /// Retrieve user by UID
+  UserMain? getUser(String uid) {
+    var userBox = Hive.box<UserMain>('user_main');
+    return userBox.get(uid);
+  }
 
-  // /// Update user details
-  // Future<void> updateUser(String userId, {String? firstName, String? lastName}) async {
-  //   var box = Hive.box<UserMain>('user_main');
-  //   var user = box.get(userId);
+  /// Retrieve stored Firebase UID for auto-login
+  String? getStoredUID() {
+    var userBox = Hive.box<UserMain>('user_main');
+    if (userBox.isNotEmpty) {
+      return userBox.values.first.uid; // Get first stored UID
+    }
+    return null;
+  }
 
-  //   if (user != null) {
-  //     box.put(userId, user.copyWith(
-  //       firstName: firstName ?? user.firstName,
-  //       lastName: lastName ?? user.lastName,
-  //     ));
-  //     print("✅ User updated: $userId");
-  //   } else {
-  //     print("⚠️ User not found: $userId");
-  //   }
-  // }
+  /// Update user details
+  Future<void> updateUser(String userId, {String? firstName, String? lastName}) async {
+    var box = Hive.box<UserMain>('user_main');
+    var user = box.get(userId);
+
+    if (user != null) {
+      box.put(userId, user.copyWith(
+        firstName: firstName ?? user.firstName,
+        lastName: lastName ?? user.lastName,
+      ));
+      print("✅ User updated: $userId");
+    } else {
+      print("⚠️ User not found: $userId");
+    }
+  }
+
+  /// Delete user
+  Future<void> deleteUser(String userId) async {
+    var box = Hive.box<UserMain>('user_main');
+    await box.delete(userId);
+    print("🗑️ User deleted: $userId");
+  }
 
   /// Update GameData
   Future<void> updateGameData(String gameId, {int? duration, int? points}) async {
@@ -89,76 +111,10 @@ class HiveService {
     }
   }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  /// Insert test data for debugging
-//   Future<void> insertTestData() async {
-//     var userBox = Hive.box<UserMain>('user_main');
-//     var gameBox = Hive.box<GameData>('game_data');
-//     var sentimentBox = Hive.box<SentimentData>('sentiment_data');
-
-//     // Insert test user
-//     var testUser = UserMain(uid: "test_uid_001", firstName: "John", lastName: "Doe");
-//     userBox.put(testUser.uid, testUser);
-    
-//     // Insert test game data
-//     var testGame = GameData(gameId: "game_001", timePlayed: DateTime.now(), duration: 120, points: 500);
-//     gameBox.put(testGame.gameId, testGame);
-    
-//     // Insert test sentiment data
-//     var testSentiment = SentimentData(sentimentId: "sent_001", time: DateTime.now(), score: 0.85, prompt: "Feeling great!");
-//     sentimentBox.put(testSentiment.sentimentId, testSentiment);
-
-//     print("🚀 Test data inserted successfully!");
-//   }
-
-//   /// Retrieve and print stored data
-//   void retrieveTestData() {
-//     var userBox = Hive.box<UserMain>('user_main');
-//     var gameBox = Hive.box<GameData>('game_data');
-//     var sentimentBox = Hive.box<SentimentData>('sentiment_data');
-
-//     print("\n🔹 Stored User Data:");
-//     for (var user in userBox.values) {
-//       print("ID: ${user.userId}, Name: ${user.firstName} ${user.lastName}");
-//     }
-
-//     print("\n🎮 Stored Game Data:");
-//     for (var game in gameBox.values) {
-//       print("ID: ${game.gameId}, Time Played: ${game.timePlayed}, Duration: ${game.duration}, Points: ${game.points}");
-//     }
-
-//     print("\n😊 Stored Sentiment Data:");
-//     for (var sentiment in sentimentBox.values) {
-//       print("ID: ${sentiment.sentimentId}, Score: ${sentiment.score}, Prompt: ${sentiment.prompt}");
-//     }
-//   }
-// }
+  /// Clear all user data (for logout)
+  Future<void> clearUserData() async {
+    var userBox = Hive.box<UserMain>('user_main');
+    await userBox.clear();
+    print("🧹 All user data cleared");
+  }
 }

@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:frontend/models/UserDTO.dart';
-import 'package:frontend/services/hive_service.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:frontend/core/constants/app_colors.dart';
+import 'package:frontend/services/auth_service.dart';
 import 'package:frontend/widgets/custom_button.dart';
 import 'package:frontend/widgets/custom_label.dart';
 import 'package:frontend/widgets/text_field.dart';
@@ -12,7 +9,9 @@ class Signup extends StatelessWidget {
   Signup({super.key});
 
   final _formkey = GlobalKey<FormState>();
+  final AuthService _authService = AuthService();
 
+  // Controllers
   final firstNameController = TextEditingController();
   final lastNameController = TextEditingController();
   final emailNameController = TextEditingController();
@@ -20,90 +19,60 @@ class Signup extends StatelessWidget {
   final confirmPasswordController = TextEditingController();
 
   // Firebase Email/Password Signup Method
-
-Future<void> signup(BuildContext context) async {
-  if (_formkey.currentState != null && _formkey.currentState!.validate()) {
-    try {
-      UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+  Future<void> signup(BuildContext context) async {
+    if (_formkey.currentState != null && _formkey.currentState!.validate()) {
+      final userCredential = await _authService.signUpWithEmailAndPassword(
         email: emailNameController.text.trim(),
         password: passwordController.text.trim(),
+        firstName: firstNameController.text,
+        lastName: lastNameController.text,
+        context: context,
       );
 
-      User? user = userCredential.user;
-      if (user != null) {
-        await user.updateDisplayName("${firstNameController.text} ${lastNameController.text}");
-        print("User signed up successfully: ${user.email}");
-
-        // 🔹 Store First & Last Name with Firebase UID
-        String uid = user.uid; // Get Firebase UID
-        UserDTO userDTO = UserDTO(
-          firstName: firstNameController.text,
-          lastName: lastNameController.text,
+      if (userCredential != null) {
+        Navigator.pushNamedAndRemoveUntil(
+          context, '/home', (Route<dynamic> route) => false,
         );
-
-        await HiveService().saveUser(uid, userDTO);
-        print("User data stored in Hive with UID: $uid");
-
-        // Navigate to Home Page
-        Navigator.pushNamedAndRemoveUntil(context, '/home', (Route<dynamic> route) => false);
       }
-    } on FirebaseAuthException catch (e) {
-      print("Signup error: ${e.message}");
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Error: ${e.message}"))
-      );
+    } else {
+      print("Signup validation failed.");
     }
-  } else {
-    print("Signup validation failed.");
   }
-}
 
-
+  // Navigate to Sign In
   void _signin(BuildContext context) {
     Navigator.pushNamed(context, '/signin');
   }
 
-  Future<void> signInWithGoogle(BuildContext context) async {
-  try {
-    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-    if (googleUser == null) {
-      print("Google Sign-In canceled by user.");
-      return;
-    }
-
-    final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-    final AuthCredential credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
-
-    UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
-
-    if (userCredential.user != null) {
-      print("Google Sign-In successful: ${userCredential.user?.email}");
-      
-      // Show a success message
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Signed in as ${userCredential.user!.email}")),
-      );
-
-      // Navigate to Home Page
-      Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
-    } else {
-      print("Google Sign-In failed.");
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Google Sign-In failed")),
+  // Google Sign In
+  Future<void> _signInWithGoogle(BuildContext context) async {
+    final userCredential = await _authService.signInWithGoogle(context);
+    if (userCredential != null) {
+      Navigator.pushNamedAndRemoveUntil(
+        context, '/home', (Route<dynamic> route) => false,
       );
     }
-  } catch (e) {
-    print("Google Sign-In Error: $e");
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("Error: $e")),
-    );
   }
-}
 
-/////////////////////////////////////////////////////////
+  // Facebook Sign In
+  Future<void> _signInWithFacebook(BuildContext context) async {
+    final userCredential = await _authService.signInWithFacebook(context);
+    if (userCredential != null) {
+      Navigator.pushNamedAndRemoveUntil(
+        context, '/home', (Route<dynamic> route) => false,
+      );
+    }
+  }
+
+  // Apple Sign In
+  Future<void> _signInWithApple(BuildContext context) async {
+    final userCredential = await _authService.signInWithApple(context);
+    if (userCredential != null) {
+      Navigator.pushNamedAndRemoveUntil(
+        context, '/home', (Route<dynamic> route) => false,
+      );
+    }
+  }
  
   @override
   Widget build(BuildContext context) {
@@ -180,7 +149,11 @@ Future<void> signup(BuildContext context) async {
                                   CustomLabel(text: "Password"),
                                   CustomTextField(
                                     controller: passwordController,
-                                    validator: (value) => value!.isEmpty ? "Please enter your password" : null,
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) return "Please enter your password";
+                                      if (value.length < 6) return "Password must be at least 6 characters";
+                                      return null;
+                                    },
                                     hintText: "Enter password",
                                     hasAsteriks: true,
                                   ),
@@ -222,17 +195,17 @@ Future<void> signup(BuildContext context) async {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             InkWell(
-                              onTap: () => signInWithGoogle(context),
+                              onTap: () => _signInWithGoogle(context),
                               child: Image.asset('assets/img/google.png', height: 32),
                             ),
                             SizedBox(width: 24),
                             InkWell(
-                              onTap: () => print("Facebook Sign-In"),
+                              onTap: () => _signInWithFacebook(context),
                               child: Image.asset('assets/img/facebook.png', height: 32),
                             ),
                             SizedBox(width: 24),
                             InkWell(
-                              onTap: () => print('Apple Sign-In'),
+                              onTap: () => _signInWithApple(context),
                               child: Image.asset('assets/img/apple.png', height: 32),
                             )
                           ],

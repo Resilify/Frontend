@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/core/constants/app_colors.dart';
+import 'package:frontend/services/auth_service.dart';
 import 'package:frontend/widgets/custom_button.dart';
 import 'package:frontend/widgets/custom_label.dart';
 import 'package:frontend/widgets/text_field.dart';
@@ -8,29 +9,77 @@ class Signin extends StatelessWidget {
   Signin({super.key});
 
   final _formkey = GlobalKey<FormState>();
+  final AuthService _authService = AuthService();
 
-  void signin(context) {
+  // Controllers
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+
+  // Firebase Email/Password Sign In
+  Future<void> signin(BuildContext context) async {
     if (_formkey.currentState != null && _formkey.currentState!.validate()) {
-      print(userNameController.text);
-      print(passwordController.text);
+      final userCredential = await _authService.signInWithEmailAndPassword(
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
+        context: context,
+      );
 
-      Navigator.pushNamedAndRemoveUntil(
-        context, '/home',
-        (Route<dynamic> route) => false,
+      if (userCredential != null) {
+        print("Login successful: ${userCredential.user?.email}");
+        Navigator.pushNamedAndRemoveUntil(
+          context, '/home', (Route<dynamic> route) => false,
         );
-
-      print("Login Done For Resilify !!!! ");
+      }
     } else {
-      print("Login unsuccessful");
+      print("Login validation failed");
     }
   }
 
-  _signup(context) {
+  // Navigate to Signup
+  void _signup(BuildContext context) {
     Navigator.pushNamed(context, '/signup');
   }
 
-  final userNameController = TextEditingController();
-  final passwordController = TextEditingController();
+  // Google Sign In
+  Future<void> _signInWithGoogle(BuildContext context) async {
+    final userCredential = await _authService.signInWithGoogle(context);
+    if (userCredential != null) {
+      Navigator.pushNamedAndRemoveUntil(
+        context, '/home', (Route<dynamic> route) => false,
+      );
+    }
+  }
+
+  // Facebook Sign In
+  Future<void> _signInWithFacebook(BuildContext context) async {
+    final userCredential = await _authService.signInWithFacebook(context);
+    if (userCredential != null) {
+      Navigator.pushNamedAndRemoveUntil(
+        context, '/home', (Route<dynamic> route) => false,
+      );
+    }
+  }
+
+  // Apple Sign In
+  Future<void> _signInWithApple(BuildContext context) async {
+    final userCredential = await _authService.signInWithApple(context);
+    if (userCredential != null) {
+      Navigator.pushNamedAndRemoveUntil(
+        context, '/home', (Route<dynamic> route) => false,
+      );
+    }
+  }
+
+  // Reset Password
+  void _resetPassword(BuildContext context) {
+    if (emailController.text.isNotEmpty) {
+      _authService.resetPassword(emailController.text.trim(), context);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Please enter your email address first")),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -98,7 +147,7 @@ class Signin extends StatelessWidget {
                               }
                               return null;
                             },
-                            controller: userNameController,
+                            controller: emailController,
                           ),
 
                           SizedBox(
@@ -130,15 +179,13 @@ class Signin extends StatelessWidget {
                             "Forgot password?",
                             style: TextStyle(fontWeight: FontWeight.w100),
                           ),
-                          onPressed: () {},
+                          onPressed: () => _resetPassword(context),
                         ),
                       ],
                     ),
                     CustomButton(
                         text: "Sign in",
-                        onPress: () {
-                          signin(context);
-                        }),
+                        onPress: () => signin(context)),
 
                     SizedBox(
                       height: 24,
@@ -163,9 +210,7 @@ class Signin extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         InkWell(
-                          onTap: () {
-                            print("goolge");
-                          },
+                          onTap: () => _signInWithGoogle(context),
                           child: Image.asset(
                             'assets/img/google.png',
                             height: 32,
@@ -175,9 +220,7 @@ class Signin extends StatelessWidget {
                           width: 24,
                         ),
                         InkWell(
-                          onTap: () {
-                            print("facebook");
-                          },
+                          onTap: () => _signInWithFacebook(context),
                           child: Image.asset(
                             'assets/img/facebook.png',
                             height: 32,
@@ -187,9 +230,7 @@ class Signin extends StatelessWidget {
                           width: 24,
                         ),
                         InkWell(
-                          onTap: () {
-                            print('apple');
-                          },
+                          onTap: () => _signInWithApple(context),
                           child: Image.asset(
                             'assets/img/apple.png',
                             height: 32,
@@ -213,9 +254,7 @@ class Signin extends StatelessWidget {
                                 fontWeight: FontWeight.w900,
                                 color: AppColors.primaryTextColor),
                           ),
-                          onPressed: () {
-                            _signup(context);
-                          },
+                          onPressed: () => _signup(context),
                         ),
                       ],
                     ),
