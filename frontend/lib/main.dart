@@ -40,7 +40,7 @@ class Resilify extends StatelessWidget {
         '/erp_loop' : (context) => ERPLoopPage(),
         '/victory' : (context) => Victory(),
         '/game_over' : (context) => GameOver(),
-        // Cognitive Restructuring Routes
+      
         '/cognitive_input': (context) => CognitiveInputPage(),
         '/cognitive_reframed': (context) => CognitiveReframedPage(userInput: ""), // Providing empty input for now
         '/cognitive_mascot': (context) => CognitiveMascotPage(reframedThought: ""), // Providing empty input for now
