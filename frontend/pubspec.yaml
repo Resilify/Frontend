@@ -1,6 +1,6 @@
 name: frontend
 description: "Medical app for OCD patients"
-publish_to: "none" # Remove this line if you wish to publish to pub.dev
+publish_to: "none"
 
 version: 1.0.0+1
 
@@ -42,13 +42,13 @@ dependencies:
   firebase_core: ^2.32.0
   flutter_secure_storage: ^9.2.4
   encrypt: ^5.0.3
-  # Authentication
+  # Authentication (only email/password)
   firebase_auth: ^4.16.0
   firebase_storage: ^11.6.1
-  google_sign_in: ^6.2.2
-  # Added for social authentication
-  flutter_facebook_auth: ^6.0.3
-  sign_in_with_apple: ^5.0.0
+  # Removed social auth dependencies:
+  # google_sign_in: ^6.2.2
+  # flutter_facebook_auth: ^6.0.3
+  # sign_in_with_apple: ^5.0.0
 
 dev_dependencies:
   flutter_test:

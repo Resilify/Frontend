@@ -62,10 +62,9 @@ class HiveService {
     var user = box.get(userId);
 
     if (user != null) {
-      box.put(userId, user.copyWith(
-        firstName: firstName ?? user.firstName,
-        lastName: lastName ?? user.lastName,
-      ));
+      user.firstName = firstName ?? user.firstName;
+      user.lastName = lastName ?? user.lastName;
+      box.put(userId, user);
       print("✅ User updated: $userId");
     } else {
       print("⚠️ User not found: $userId");
