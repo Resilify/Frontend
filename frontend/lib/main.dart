@@ -1,24 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/core/constants/app_colors.dart';
+import 'package:frontend/screens/erp_loop.dart';
+import 'package:frontend/screens/home.dart';
+import 'package:frontend/screens/landing.dart';
+import 'package:frontend/screens/signin.dart';
+import 'package:frontend/screens/signup.dart';
+import 'package:frontend/screens/splash.dart';
+import 'package:frontend/screens/streak.dart';
+import 'package:frontend/screens/victory.dart';
+import 'package:frontend/screens/game_over.dart';
+import 'package:frontend/screens/cognitive_input.dart';
+import 'package:frontend/screens/cognitive_reframed.dart';
+import 'package:frontend/screens/cognitive_mascot.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'services/hive_service.dart';
 import 'services/auth_service.dart';
-import 'core/constants/app_colors.dart';
-import 'screens/splash.dart';
-import 'screens/landing.dart';
-import 'screens/signin.dart';
-import 'screens/signup.dart';
-import 'screens/home.dart';
-import 'screens/erp_loop.dart';
-import 'screens/victory.dart';
-import 'screens/game_over.dart';
-import 'screens/cognitive_input.dart';
-import 'screens/cognitive_reframed.dart';
-import 'screens/cognitive_mascot.dart';
 
-//save keys where safe **
+//save keys where safe ** k3
 const FirebaseOptions firebaseOptions = FirebaseOptions(
   apiKey: "AIzaSyCDCca1HTVvJVLdOEezQF4syob8FBsleaQ",
   authDomain: "resilify-flaskbe.firebaseapp.com",
@@ -103,9 +104,11 @@ class _ResilifyState extends State<Resilify> {
         '/erp_loop': (context) => ERPLoopPage(),
         '/victory': (context) => Victory(),
         '/game_over': (context) => GameOver(),
+        '/streak': (context) => Streak(),
+        // Cognitive Restructuring Routes
         '/cognitive_input': (context) => CognitiveInputPage(),
-        '/cognitive_reframed': (context) => CognitiveReframedPage(userInput: ""),
-        '/cognitive_mascot': (context) => CognitiveMascotPage(reframedThought: ""),
+        '/cognitive_reframed': (context) => CognitiveReframedPage(userInput: ""), // Providing empty input for now
+        '/cognitive_mascot': (context) => CognitiveMascotPage(reframedThought: ""), // Providing empty input for now
       },
     );
   }
