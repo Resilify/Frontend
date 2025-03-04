@@ -5,33 +5,32 @@ import 'package:frontend/models/user_main.dart';
 
 class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   const CustomAppBar({super.key});
-
+  
   @override
   _CustomAppBarState createState() => _CustomAppBarState();
-
+  
   @override
   Size get preferredSize => const Size.fromHeight(60);
 }
 
 class _CustomAppBarState extends State<CustomAppBar> {
-  String firstName = "User !"; // Default name if Hive data is empty
-
+  String firstName = "User"; // Default name if Hive data is empty
+  
   @override
   void initState() {
     super.initState();
     _loadUserName(); // Fetch latest name from Hive
   }
-
+  
   Future<void> _loadUserName() async {
     var userBox = Hive.box<UserMain>('user_main');
-
     if (userBox.isNotEmpty) {
       setState(() {
         firstName = userBox.values.last.firstName; // Get latest added name
       });
     }
   }
-
+  
   @override
   Widget build(BuildContext context) {
     return AppBar(
@@ -51,11 +50,19 @@ class _CustomAppBarState extends State<CustomAppBar> {
             children: [
               Text("15", style: TextStyle(color: AppColors.primaryTextColor)),
               const SizedBox(width: 4),
-              const Icon(Icons.local_fire_department, color: Colors.green),
+              Image.asset(
+                'assets/img/streak.png',
+                height: 30,
+                width: 30,
+              ),
               const SizedBox(width: 10),
               Text("280", style: TextStyle(color: AppColors.primaryTextColor)),
               const SizedBox(width: 4),
-              const Icon(Icons.monetization_on, color: Colors.green),
+              Image.asset(
+                'assets/img/star.png',
+                height: 33,
+                width: 33,
+              ),
             ],
           ),
         ],
