@@ -24,11 +24,11 @@ dependencies:
   animated_flip_counter: ^0.3.4
   # Audio and permissions
   microphone: ^0.1.0 # Pins http to ^0.13.6
-  just_audio: ^0.9.44 # Latest from your list
-  permission_handler: ^10.4.5 # Latest from your list
+  just_audio: ^0.9.44
+  permission_handler: ^10.4.5
   record: ^5.2.0
   # File system and utilities
-  path_provider: ^2.1.5 # Latest from your list
+  path_provider: ^2.1.5
   path: ^1.9.0
   intl: ^0.19.0 # For date formatting
   collection: ^1.19.0 # For utility functions like average()
@@ -40,9 +40,13 @@ dependencies:
   firebase_core: ^2.32.0
   flutter_secure_storage: ^9.2.4
   encrypt: ^5.0.3
+  # Authentication (only email/password)
   firebase_auth: ^4.16.0
   firebase_storage: ^11.6.1
-  google_sign_in: ^6.2.2
+  # Removed social auth dependencies as per auth branch comment
+  # google_sign_in: ^6.2.2
+  # flutter_facebook_auth: ^6.0.3
+  # sign_in_with_apple: ^5.0.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
