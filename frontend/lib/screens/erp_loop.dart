@@ -207,7 +207,7 @@ class _ERPLoopPageState extends State<ERPLoopPage> with TickerProviderStateMixin
           timer.cancel();
           _pauseGame(); 
           _elapsedTime = DateTime.now().difference(_startTime!);
-          Navigator.pushNamed(context, '/game_over'); 
+          Navigator.pushReplacementNamed(context, '/game_over');
         }}
         return;
       });
@@ -286,7 +286,7 @@ class _ERPLoopPageState extends State<ERPLoopPage> with TickerProviderStateMixin
                             setState(() {
                               gameStarted = false;
                             }),
-                            Navigator.pushNamed(context, '/victory'),
+                            Navigator.pushReplacementNamed(context, '/victory'),
                           },
                     )
                   : Text(

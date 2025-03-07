@@ -22,7 +22,7 @@ Future<bool> showExitConfirmationDialog(
             TextButton(
               onPressed: () {
                 onExit();
-                Navigator.pushNamed(context, '/game_over');
+                Navigator.pushReplacementNamed(context, '/game_over');
               },
               child: const Text("Yes"),
             ),

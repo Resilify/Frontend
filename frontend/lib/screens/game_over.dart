@@ -27,7 +27,7 @@ class _GameOverState extends State<GameOver> {
 
   void _goToHome() {
     audioPlayer.stop();
-    Navigator.pushReplacementNamed(context, '/home');
+    Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
   }
 
   @override
