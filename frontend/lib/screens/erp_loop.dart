@@ -207,7 +207,13 @@ class _ERPLoopPageState extends State<ERPLoopPage> with TickerProviderStateMixin
           timer.cancel();
           _pauseGame(); 
           _elapsedTime = DateTime.now().difference(_startTime!);
-          Navigator.pushReplacementNamed(context, '/game_over');
+          if (_elapsedTime.inMilliseconds < _duration.inMilliseconds / 2){
+              Navigator.pushReplacementNamed(context, '/game_over');
+          }
+          else{
+            Navigator.pushReplacementNamed(context, '/halfway_victory');
+          }
+          
         }}
         return;
       });
@@ -275,7 +281,7 @@ class _ERPLoopPageState extends State<ERPLoopPage> with TickerProviderStateMixin
         body: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SizedBox(height: 80, width: 20),
+            SizedBox(height: 50, width: 20),
             SizedBox(
               child: gameStarted
                   ? PieTimerWidget(
