@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/core/constants/app_colors.dart';
-import 'package:rive/rive.dart';
+import 'package:rive/rive.dart' as rive;
 import 'package:animated_flip_counter/animated_flip_counter.dart';
 
 class Streak extends StatefulWidget {
@@ -9,15 +9,24 @@ class Streak extends StatefulWidget {
 }
 
 class _StreakState extends State<Streak> {
-  late RiveAnimationController _flame;
+  late rive.RiveAnimationController _flame;
   num _value = 1;
+  bool _isFlameOn = false;
 
   @override
   void initState() {
     super.initState();
-    _flame = SimpleAnimation('fiire', autoplay: true);
+    _lightFire();
     _increaseStreak();
-     _navigateToHome();
+    _navigateToHome();
+  }
+
+  _lightFire() async {
+    await Future.delayed(Duration(milliseconds: 1000), () {});
+    setState(() {
+      _isFlameOn = true;
+      _flame = rive.SimpleAnimation('fiire', autoplay: true);
+    });
   }
 
   _navigateToHome() async {
@@ -52,10 +61,16 @@ class _StreakState extends State<Streak> {
             children: [
               SizedBox(
                 height: 200,
-                child: RiveAnimation.asset(
-                  'assets/animations/flame.riv',
-                  controllers: [_flame],
-                ),
+                child: _isFlameOn
+                    ? rive.RiveAnimation.asset(
+                        'assets/animations/flame.riv',
+                        controllers: [_flame],
+                      )
+                    : Image.asset(
+                        'assets/img/unstreak.png',
+                        height: 210,
+                        width: 140,
+                      ),
               ),
               SizedBox(height: 14),
               AnimatedFlipCounter(
@@ -65,14 +80,14 @@ class _StreakState extends State<Streak> {
                   fontWeight: FontWeight.bold,
                   color: AppColors.primaryTextColor,
                 ),
-              ), 
+              ),
               Text(
                 'Day Streak',
                 style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.primaryTextColor // Change color if desired
-                ),
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.primaryTextColor // Change color if desired
+                    ),
               ),
             ],
           ),
