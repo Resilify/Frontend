@@ -18,12 +18,12 @@ class PieTimerWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 40,
+      height: 10,
       width: 70,
       child: PieTimer(
               pieAnimationController: pieAnimationController,
               duration: duration,
-              radius: 55,
+              radius: 50,
               fillColor: const Color.fromARGB(255, 186, 149, 207),
               pieColor: const Color.fromARGB(255, 208, 184, 223),
               borderColor: const Color.fromARGB(255, 116, 55, 165),

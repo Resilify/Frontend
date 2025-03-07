@@ -270,11 +270,12 @@ class _ERPLoopPageState extends State<ERPLoopPage> with TickerProviderStateMixin
         return true; // allow to go back directly if game has not started
       },
       child: Scaffold(
-        appBar: AppBar(title: Text('ERP Loop Taping')),
         backgroundColor: const Color.fromARGB(255, 224, 213, 236),
+        appBar: AppBar( title: const Text('ERP Loop'), ),
         body: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            SizedBox(height: 80, width: 20),
             SizedBox(
               child: gameStarted
                   ? PieTimerWidget(
@@ -320,7 +321,6 @@ class _ERPLoopPageState extends State<ERPLoopPage> with TickerProviderStateMixin
                           });
                         },
                       ),
-                      SizedBox(height: 20, width: 20),
                       ElevatedButton(
                         onPressed: !hasRecording || _duration == Duration.zero? null: _startGame,
                         style: ElevatedButton.styleFrom(

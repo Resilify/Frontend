@@ -18,7 +18,7 @@ class Balloon extends StatelessWidget {
     return Visibility(
       visible: balloonVisible,
       child: SizedBox(
-        height: 150,
+        height: 120,
         child: GestureDetector(
           onTap: onTap, // Calls the function from the parent widget
           child: RiveAnimation.asset(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/core/constants/app_colors.dart';
 import 'package:frontend/screens/erp_loop.dart';
+import 'package:frontend/screens/halfway_victory.dart';
 import 'package:frontend/screens/home.dart';
 import 'package:frontend/screens/landing.dart';
 import 'package:frontend/screens/signin.dart';
@@ -42,6 +43,7 @@ class Resilify extends StatelessWidget {
         '/victory' : (context) => Victory(),
         '/game_over' : (context) => GameOver(),
         '/streak':(context) => Streak(),
+        '/halfway_victory': (context) => HalfwayVictory(),
         // Cognitive Restructuring Routes
         '/cognitive_input': (context) => CognitiveInputPage(),
         '/cognitive_reframed': (context) => CognitiveReframedPage(userInput: ""), // Providing empty input for now

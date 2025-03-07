@@ -14,7 +14,7 @@ class MascotWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: gameStarted ? 450 : 350,
+      height: gameStarted ? 350 : 350,
       child: RiveAnimation.asset(
         'assets/animations/mascot_animation.riv',
         controllers: controllers,

@@ -35,7 +35,7 @@ class _StreakState extends State<Streak> {
   }
 
   void _goToHome() {
-    Navigator.pushReplacementNamed(context, '/home');
+    Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
   }
 
   _increaseStreak() async {

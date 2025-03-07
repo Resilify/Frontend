@@ -14,7 +14,7 @@ class MicrophoneWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 100,
+      height: 90,
       width: 100,
       child: GestureDetector(
         onTap: onTap, // Calls the function from parent widget
