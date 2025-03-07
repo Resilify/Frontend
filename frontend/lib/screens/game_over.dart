@@ -21,7 +21,7 @@ class _GameOverState extends State<GameOver> {
   }
 
   _navigateToHome() async {
-    await Future.delayed(Duration(milliseconds: 17000), () {});
+    await Future.delayed(Duration(milliseconds: 10000), () {});
     _goToHome();
   }
 

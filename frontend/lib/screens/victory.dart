@@ -37,8 +37,7 @@ void initState() {
 
 _navigateToHome() async {
     await Future.delayed(Duration(milliseconds: 10000), () {});
-    audioPlayer.stop();
-    Navigator.pushReplacementNamed(context, '/home');
+   _goToHome();
   }
   
   void _goToHome() {
