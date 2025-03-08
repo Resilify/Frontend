@@ -237,11 +237,11 @@ class _ERPLoopPageState extends State<ERPLoopPage> with TickerProviderStateMixin
   void _pauseGame(){ //pause game when back button is pressed and confimation box is shown
      _pauseTimer();
      _stopTalking();
+    _audioPlayer.pause();
      setState(() { 
       balloonVisible= false;
       paused = true; //prevents the appearance of the balloon widget while game is paused
     });
-     _audioPlayer.pause();
      _pauseStartTime = DateTime.now(); //starting a pause timer incase user resumes back to game
     _elapsedTime = DateTime.now().difference(_startTime!); //recording the elapsed time if user exits the game
   }
@@ -265,15 +265,17 @@ class _ERPLoopPageState extends State<ERPLoopPage> with TickerProviderStateMixin
      final double screenWidth = MediaQuery.of(context).size.width;
     return WillPopScope(
       onWillPop: () async {
-        if (gameStarted) {//if game has started
+        if (gameStarted) {
           _pauseGame();
-          bool shouldPop = await showExitConfirmationDialog(context, () {}); // show confirmation widget
-          if (!shouldPop) { //if user selectes cancel in the dialogue
-            _resumeGame(); // Resume from where it left off
+          bool shouldPop = await showExitConfirmationDialog(context, () {
+            _audioPlayer.stop(); // Ensure the audio stops immediately
+          });
+          if (!shouldPop) {
+            _resumeGame();
           }
           return shouldPop;
         }
-        return true; // allow to go back directly if game has not started
+        return true;
       },
       child: Scaffold(
         backgroundColor: const Color.fromARGB(255, 224, 213, 236),
