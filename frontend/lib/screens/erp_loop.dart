@@ -39,7 +39,7 @@ class _ERPLoopPageState extends State<ERPLoopPage> with TickerProviderStateMixin
   bool hasRecording = false;
   String? recordingPath;
   late PieAnimationController _pieAnimationController; //timer controller
-  DateTime? _startTime; //start time of the timer
+  DateTime? _startTime; //start time of the timer/game
   Duration _elapsedTime = Duration.zero; //elapsed time of the timer
   DateTime? _pauseStartTime; //starting time to calculate pause duration if user tries to go back mid game
   Duration _pauseDuration = Duration.zero;
@@ -48,7 +48,9 @@ class _ERPLoopPageState extends State<ERPLoopPage> with TickerProviderStateMixin
   bool gameStarted = false; //game state
   bool balloonVisible = false;
   Timer? _timer; //timer for balloon appearing
-  
+  int _stars = 0; //stars collected
+  DateTime? _gameEndTime; //end time of the game- at victory or game over
+ 
   @override
   void initState() {
     super.initState();
@@ -188,7 +190,6 @@ class _ERPLoopPageState extends State<ERPLoopPage> with TickerProviderStateMixin
       setState(() {
       gameStarted = true; //game starts
     });
-    
     await Future.delayed(Duration(seconds: 1)); //delay to show the timer animation appear
     _startTimer(); // Start the timer animation
     _timer = Timer.periodic(Duration(seconds: 20), (timer) { // a periodic timer to show the balloon widget
@@ -207,10 +208,14 @@ class _ERPLoopPageState extends State<ERPLoopPage> with TickerProviderStateMixin
           timer.cancel();
           _pauseGame(); 
           _elapsedTime = DateTime.now().difference(_startTime!);
+          _gameEndTime = DateTime.now();
           if (_elapsedTime.inMilliseconds < _duration.inMilliseconds / 2){
+            //send stars, elpased time, start time, end time
               Navigator.pushReplacementNamed(context, '/game_over');
           }
           else{
+            _stars = 3;
+            //send stars, elpased time, start time, end time
             Navigator.pushReplacementNamed(context, '/halfway_victory');
           }
           
@@ -267,8 +272,16 @@ class _ERPLoopPageState extends State<ERPLoopPage> with TickerProviderStateMixin
       onWillPop: () async {
         if (gameStarted) {
           _pauseGame();
-          bool shouldPop = await showExitConfirmationDialog(context, () {
+          String exitRoute = _elapsedTime.inMilliseconds < _duration.inMilliseconds / 2 
+          ? '/game_over' 
+          : '/halfway_victory';
+          bool shouldPop = await showExitConfirmationDialog(context, exitRoute, () {
+             _gameEndTime = DateTime.now();
             _audioPlayer.stop(); // Ensure the audio stops immediately
+            if (_elapsedTime.inMilliseconds > _duration.inMilliseconds / 2){
+              _stars = 3;
+            } 
+            //send stars, elpased time, start time, end time
           });
           if (!shouldPop) {
             _resumeGame();
@@ -295,6 +308,10 @@ class _ERPLoopPageState extends State<ERPLoopPage> with TickerProviderStateMixin
                             setState(() {
                               gameStarted = false;
                             }),
+                             _stars = 5,
+                             _elapsedTime = _duration,
+                              _gameEndTime = DateTime.now(),
+                             //send stars, elpased time, start time, end time
                             Navigator.pushReplacementNamed(context, '/victory'),
                           },
                     )

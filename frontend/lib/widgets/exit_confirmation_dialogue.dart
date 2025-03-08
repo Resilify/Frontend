@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/core/constants/app_colors.dart';
 
 Future<bool> showExitConfirmationDialog(
-    BuildContext context, VoidCallback onExit) async {
+    BuildContext context, String exitRoute, VoidCallback onExit) async {
   return await showDialog(
         context: context,
         builder: (context) => AlertDialog(
@@ -22,7 +22,7 @@ Future<bool> showExitConfirmationDialog(
             TextButton(
               onPressed: () {
                 onExit();
-                Navigator.pushReplacementNamed(context, '/game_over');
+                Navigator.pushReplacementNamed(context, exitRoute);
               },
               child: const Text("Yes"),
             ),
