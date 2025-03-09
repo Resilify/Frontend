@@ -31,7 +31,7 @@ void initState() {
     _open = SimpleAnimation('open', autoplay: false);
     _glare = SimpleAnimation('Glare Open', autoplay: true);
     _shining = SimpleAnimation('Loop', autoplay: true);
-    _navigateToHome();
+    _navigateToStreak();
     
 }
 
@@ -43,6 +43,12 @@ _navigateToHome() async {
   void _goToHome() {
     audioPlayer.stop();
     Navigator.pushReplacementNamed(context, '/home');
+  }
+
+_navigateToStreak() async {
+    await Future.delayed(Duration(milliseconds: 10000), () {});
+    audioPlayer.stop();
+   Navigator.pushReplacementNamed(context, '/streak');
   }
 
   @override

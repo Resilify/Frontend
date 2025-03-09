@@ -203,7 +203,7 @@ class _ERPLoopPageState extends State<ERPLoopPage> with TickerProviderStateMixin
   });
 
   if (balloonVisible && !paused) {
-    Future.delayed(Duration(seconds: 12), () async {
+    Future.delayed(Duration(seconds: 11), () async {
       if (!gameStarted) {
         timer.cancel();
         return;
