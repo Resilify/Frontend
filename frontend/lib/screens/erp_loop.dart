@@ -186,43 +186,44 @@ class _ERPLoopPageState extends State<ERPLoopPage> with TickerProviderStateMixin
 
   _startGame() async {//initialize timer controller only when the game starts to prevent the rebuilding of the widget with each time picking state
       _pieAnimationController = PieAnimationController(
-        vsync: this,);
-      setState(() {
+      vsync: this,
+    );
+    setState(() {
       gameStarted = true; //game starts
     });
     await Future.delayed(Duration(seconds: 1)); //delay to show the timer animation appear
     _startTimer(); // Start the timer animation
-    _timer = Timer.periodic(Duration(seconds: 20), (timer) { // a periodic timer to show the balloon widget
-    if (!gameStarted) { //if user exits the game, the timer is cancelled
-          timer.cancel();
-          return; }
-      setState(() async {
-        balloonVisible = true;
-        if(balloonVisible && !paused){ //if the balloon is visible and game is not paused
-        await Future.delayed(Duration(seconds: 12)); //waiting for the user to pop the balloon
-        if(!gameStarted){
-          timer.cancel();
-          return;
-        }
-        if (balloonVisible) { //if the balloon is not popped in 12 seconds, game over
-          timer.cancel();
-          _pauseGame(); 
-          _elapsedTime = DateTime.now().difference(_startTime!);
-          _gameEndTime = DateTime.now();
-          if (_elapsedTime.inMilliseconds < _duration.inMilliseconds / 2){
-            //send stars, elpased time, start time, end time
-              Navigator.pushReplacementNamed(context, '/game_over');
-          }
-          else{
-            _stars = 3;
-            //send stars, elpased time, start time, end time
-            Navigator.pushReplacementNamed(context, '/halfway_victory');
-          }
-          
-        }}
+    _timer = Timer.periodic(Duration(seconds: 20), (timer) { //timer to make balloons appear
+      if (!gameStarted) {
+        timer.cancel();
         return;
-      });
+  }
+  setState(() {
+    balloonVisible = true;
+  });
+
+  if (balloonVisible && !paused) {
+    Future.delayed(Duration(seconds: 12), () async {
+      if (!gameStarted) {
+        timer.cancel();
+        return;
+      }
+      if (balloonVisible) {
+        timer.cancel();
+        _pauseGame();
+        _elapsedTime = DateTime.now().difference(_startTime!);
+        _gameEndTime = DateTime.now();
+        
+        if (_elapsedTime.inMilliseconds < _duration.inMilliseconds / 2) {
+          Navigator.pushReplacementNamed(context, '/game_over');
+        } else {
+          _stars = 3;
+          Navigator.pushReplacementNamed(context, '/halfway_victory');
+        }
+      }
     });
+  }
+});
     while (_elapsedTime < _duration) {//while the set duration is met
       if (!kIsWeb) {//if android
         await _audioPlayer.setFilePath(recordingPath!);
