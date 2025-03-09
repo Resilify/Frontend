@@ -270,26 +270,37 @@ class _ERPLoopPageState extends State<ERPLoopPage> with TickerProviderStateMixin
      final double screenWidth = MediaQuery.of(context).size.width;
     return WillPopScope(
       onWillPop: () async {
-        if (gameStarted) {
-          _pauseGame();
-          String exitRoute = _elapsedTime.inMilliseconds < _duration.inMilliseconds / 2 
-          ? '/game_over' 
-          : '/halfway_victory';
-          bool shouldPop = await showExitConfirmationDialog(context, exitRoute, () {
-             _gameEndTime = DateTime.now();
-            _audioPlayer.stop(); // Ensure the audio stops immediately
-            if (_elapsedTime.inMilliseconds > _duration.inMilliseconds / 2){
-              _stars = 3;
-            } 
-            //send stars, elpased time, start time, end time
-          });
-          if (!shouldPop) {
-            _resumeGame();
+  if (gameStarted) {
+    _pauseGame(); // Pause game state if it's running
+
+    String exitRoute = _elapsedTime.inMilliseconds < _duration.inMilliseconds / 2
+        ? '/game_over'
+        : '/halfway_victory';
+
+    // Show the exit confirmation dialog and handle navigation based on user confirmation
+    bool shouldPop = await showExitConfirmationDialog(
+      context,
+      exitRoute,
+      (userConfirmedExit) {
+        if (userConfirmedExit) {
+          // Perform the actions if the user confirmed exit
+          _audioPlayer.pause();
+          _gameEndTime = DateTime.now();
+          if (_elapsedTime.inMilliseconds > _duration.inMilliseconds / 2) {
+            _stars = 3;
           }
-          return shouldPop;
+          // Send data (stars, elapsed time, etc.)
+          Navigator.pushReplacementNamed(context, exitRoute); // Navigate to the exit route
+        } else {
+          // Perform actions if the user canceled exit
+          _resumeGame(); 
         }
-        return true;
       },
+    );
+    return shouldPop; // Only pop if confirmed (shouldPop is true)
+  }
+  return true;
+},
       child: Scaffold(
         backgroundColor: const Color.fromARGB(255, 224, 213, 236),
         appBar: AppBar( title: const Text('ERP Loop'), ),
