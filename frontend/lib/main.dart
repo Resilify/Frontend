@@ -12,6 +12,11 @@ import 'package:frontend/screens/game_over.dart';
 import 'package:frontend/screens/cognitive_input.dart';
 import 'package:frontend/screens/cognitive_reframed.dart';
 import 'package:frontend/screens/cognitive_mascot.dart';
+import 'package:frontend/screens/ThriveAndGrowMain.dart';
+import 'package:frontend/screens/MythBusting.dart';
+import 'package:frontend/screens/MotivationalVideos.dart';
+import 'package:frontend/screens/SuccessStories.dart';
+import 'package:frontend/screens/SelfCareReward.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -111,10 +116,14 @@ class _ResilifyState extends State<Resilify> {
         '/erp_loop' : (context) => ERPLoopPage(),
         '/victory' : (context) => Victory(),
         '/game_over' : (context) => GameOver(),
-         // Cognitive Restructuring Routes
         '/cognitive_input': (context) => CognitiveInputPage(),
-        '/cognitive_reframed': (context) => CognitiveReframedPage(userInput: ""), // Providing empty input for now
-        '/cognitive_mascot': (context) => CognitiveMascotPage(reframedThought: ""), // Providing empty input for now
+        '/cognitive_reframed': (context) => CognitiveReframedPage(userInput: ""), 
+        '/cognitive_mascot': (context) => CognitiveMascotPage(reframedThought: ""),
+        '/ThriveAndGrow': (context) => ThriveAndGrow(),
+        '/MythBusting': (context) => MythBusting(),
+        '/MotivationalVideos': (context) => MotivationalVideos(),
+        '/SuccessStories': (context) => SuccessStories(),
+        '/SelfCareReward': (context) => SelfCareReward(),
       },
     );
   }
