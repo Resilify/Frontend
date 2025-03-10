@@ -1,283 +1,186 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/core/constants/app_colors.dart';
+import 'package:frontend/services/auth_service.dart';
 import 'package:frontend/widgets/custom_button.dart';
 import 'package:frontend/widgets/custom_label.dart';
 import 'package:frontend/widgets/text_field.dart';
 
-class Signup extends StatelessWidget {
-  Signup({super.key});
+class Signup extends StatefulWidget {
+  const Signup({super.key});
 
+  @override
+  State<Signup> createState() => _SignupState();
+}
+
+class _SignupState extends State<Signup> {
   final _formkey = GlobalKey<FormState>();
+  final AuthService _authService = AuthService();
 
+  // Controllers
   final firstNameController = TextEditingController();
   final lastNameController = TextEditingController();
   final emailNameController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
-  
+  bool _isLoading = false;
 
-  void signup(context) {
+  // Firebase Email/Password Signup Method
+  Future<void> signup(BuildContext context) async {
     if (_formkey.currentState != null && _formkey.currentState!.validate()) {
-      print(firstNameController.text);
-      print(lastNameController.text);
-
-      Navigator.pushNamedAndRemoveUntil(
-        context, '/home',
-        (Route<dynamic> route) => false,
+      setState(() {
+        _isLoading = true;
+      });
+      
+      try {
+        final userCredential = await _authService.signUpWithEmailAndPassword(
+          email: emailNameController.text.trim(),
+          password: passwordController.text.trim(),
+          firstName: firstNameController.text,
+          lastName: lastNameController.text,
+          context: context,
         );
 
-      print("Login Presed");
+        if (userCredential != null) {
+          Navigator.pushNamedAndRemoveUntil(
+            context, '/home', (Route<dynamic> route) => false,
+          );
+        }
+      } finally {
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+        }
+      }
     } else {
-      print("Login unsuccessful");
+      print("Signup validation failed.");
     }
   }
 
-  _signin(context) {
+  // Navigate to Sign In
+  void _signin(BuildContext context) {
     Navigator.pushNamed(context, '/signin');
   }
-
+ 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: AppColors.primaryColor,
-        body: Column(children: [
-          // above section and image
-          Padding(
-            padding: const EdgeInsets.only(top: 80),
-            child: Center(
-              child: Image.asset('assets/img/logo_2.png'),
-            ),
-          ),
-
-          // all the sign up widgets
-          Expanded(
-              child: Container(
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: AppColors.secondaryColor,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(50),
-                      topRight: Radius.circular(50),
-                    ),
+        body: _isLoading
+            ? Center(child: CircularProgressIndicator(color: Colors.white))
+            : Column(children: [
+                // 🔹 Logo
+                Padding(
+                  padding: const EdgeInsets.only(top: 80),
+                  child: Center(
+                    child: Image.asset('assets/img/logo_2.png'),
                   ),
-                  child: Padding(
-                      padding:
-                          const EdgeInsets.only(left: 30, top: 0, right: 30),
+                ),
 
-                      // title and rest of the details in coloum format
-                      child: ListView(
-                          //crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Text(
-                              "Sign up",
-                              style: TextStyle(
-                                  fontSize: 32,
-                                  fontWeight: FontWeight.bold,
-                                  color: AppColors.primaryTextColor),
-                            ),
-                            SizedBox(
-                              height: 20,
-                            ),
+                // 🔹 Signup Form
+                Expanded(
+                    child: Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: AppColors.secondaryColor,
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(50),
+                            topRight: Radius.circular(50),
+                          ),
+                        ),
+                        child: Padding(
+                            padding: const EdgeInsets.only(left: 30, top: 0, right: 30),
+                            child: ListView(children: [
+                              Text(
+                                "Sign up",
+                                style: TextStyle(
+                                    fontSize: 32,
+                                    fontWeight: FontWeight.bold,
+                                    color: AppColors.primaryTextColor),
+                              ),
+                              SizedBox(height: 20),
 
-                            // textfields
-                            Form(
-                                key: _formkey,
-                                child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      // text
-                                      CustomLabel(text: "First Name"),
+                              // 🔹 Form Fields
+                              Form(
+                                  key: _formkey,
+                                  child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        CustomLabel(text: "First Name"),
+                                        CustomTextField(
+                                          controller: firstNameController,
+                                          validator: (value) => value!.isEmpty ? "Please enter your first name" : null,
+                                          hintText: "Enter first name",
+                                        ),
+                                        SizedBox(height: 15),
 
-                                      // input feild for first name
-                                      CustomTextField(
-                                        controller: firstNameController,
-                                        validator: (value) {
-                                          if (value == null || value.isEmpty) {
-                                            return "Please enter your first name";
-                                          }
-                                          return null;
-                                        },
-                                        hintText: "Enter first name",
-                                      ),
+                                        CustomLabel(text: "Last Name"),
+                                        CustomTextField(
+                                          controller: lastNameController,
+                                          validator: (value) => value!.isEmpty ? "Please enter your last name" : null,
+                                          hintText: "Enter last name",
+                                        ),
+                                        SizedBox(height: 15),
 
-                                      SizedBox(
-                                        height: 15,
-                                      ),
+                                        CustomLabel(text: "Email"),
+                                        CustomTextField(
+                                          hintText: "Enter email",
+                                          validator: (value) {
+                                            if (value == null || value.isEmpty) return "Please enter your email";
+                                            if (!RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$").hasMatch(value)) {
+                                              return "Please enter a valid email";
+                                            }
+                                            return null;
+                                          },
+                                          controller: emailNameController,
+                                        ),
+                                        SizedBox(height: 15),
 
-                                      // text
-                                      CustomLabel(text: "Last Name"),
-
-                                      // input feild for last name
-                                      CustomTextField(
-                                        controller: lastNameController,
-                                        validator: (value) {
-                                          if (value == null || value.isEmpty) {
-                                            return "Please enter your last name";
-                                          }
-                                          return null;
-                                        },
-                                        hintText: "Enter last name",
-                                      ),
-
-                                      SizedBox(
-                                        height: 15,
-                                      ),
-
-                                      // text
-                                      CustomLabel(text: "Email"),
-
-                                      // input feild for email
-                                      CustomTextField(
-                                        hintText: "Enter email",
-                                        validator: (value) {
-                                          if (value == null || value.isEmpty) {
-                                            return "Please enter your email";
-                                          } else if (!RegExp(
-                                                  r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")
-                                              .hasMatch(value)) {
-                                            return "Please enter a valid email address";
-                                          }
-                                          return null;
-                                        },
-                                        controller: emailNameController,
-                                      ),
-
-                                      SizedBox(
-                                        height: 15,
-                                      ),
-
-                                      // text
-                                      CustomLabel(text: "Password"),
-
-                                      // input feild for password
-                                      CustomTextField(
+                                        CustomLabel(text: "Password"),
+                                        CustomTextField(
                                           controller: passwordController,
                                           validator: (value) {
-                                            if (value == null ||
-                                                value.isEmpty) {
-                                              return "Please enter your password";
-                                            }
+                                            if (value == null || value.isEmpty) return "Please enter your password";
+                                            if (value.length < 6) return "Password must be at least 6 characters";
                                             return null;
                                           },
                                           hintText: "Enter password",
-                                          hasAsteriks: true),
+                                          hasAsteriks: true,
+                                        ),
+                                        SizedBox(height: 15),
 
-                                      SizedBox(
-                                        height: 15,
-                                      ),
-
-                                      // text
-                                      CustomLabel(text: "Confirm Password"),
-
-                                      // input feild for confirm password
-                                      CustomTextField(
+                                        CustomLabel(text: "Confirm Password"),
+                                        CustomTextField(
                                           controller: confirmPasswordController,
                                           validator: (value) {
-                                            if (value == null ||
-                                                value.isEmpty) {
-                                              return "Please re-enter your password";
-                                            } else if (value != passwordController.text) {
-                                              return "Passwords do not match";
-                                            }
+                                            if (value == null || value.isEmpty) return "Please re-enter your password";
+                                            if (value != passwordController.text) return "Passwords do not match";
                                             return null;
                                           },
                                           hintText: "Re-enter password",
-                                          hasAsteriks: true),
-                                    ])),
+                                          hasAsteriks: true,
+                                        ),
+                                      ])),
 
-                            SizedBox(
-                              height: 24,
-                            ),
+                              SizedBox(height: 30),
 
-                            //sign up button
-                            CustomButton(
-                                text: "Sign Up",
-                                onPress: () {
-                                  signup(context);
-                                }),
-                            // text
+                              // 🔹 Sign Up Button
+                              CustomButton(text: "Sign Up", onPress: () => signup(context)),
 
-                            SizedBox(
-                              height: 12,
-                            ),
+                              SizedBox(height: 30),
 
-                            Text(
-                              "OR SIGN UP WITH",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w900,
-                                  color: AppColors.primaryTextColor,
-                                  fontSize: 12),
-                              textAlign: TextAlign.center,
-                            ),
-
-                            SizedBox(
-                              height: 16,
-                            ),
-
-                            //other login options
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                InkWell(
-                                  onTap: () {
-                                    print("goolge");
-                                  },
-                                  child: Image.asset(
-                                    'assets/img/google.png',
-                                    height: 32,
+                              // 🔹 Already have an account? Sign In
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text("Already have an account?", style: TextStyle(color: AppColors.primaryTextColor)),
+                                  TextButton(
+                                    child: Text("SIGN IN", style: TextStyle(fontWeight: FontWeight.w900, color: AppColors.primaryTextColor)),
+                                    onPressed: () => _signin(context),
                                   ),
-                                ),
-                                SizedBox(
-                                  width: 24,
-                                ),
-                                InkWell(
-                                  onTap: () {
-                                    print("facebook");
-                                  },
-                                  child: Image.asset(
-                                    'assets/img/facebook.png',
-                                    height: 32,
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 24,
-                                ),
-                                InkWell(
-                                  onTap: () {
-                                    print('apple');
-                                  },
-                                  child: Image.asset(
-                                    'assets/img/apple.png',
-                                    height: 32,
-                                  ),
-                                )
-                              ],
-                            ),
-
-                            // navigate to sign up
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Text(
-                                  "Already have an account?",
-                                  style: TextStyle(
-                                      color: AppColors.primaryTextColor),
-                                ),
-                                TextButton(
-                                  child: Text(
-                                    "SIGN IN",
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.w900,
-                                        color: AppColors.primaryTextColor),
-                                  ),
-                                  onPressed: () {
-                                    _signin(context);
-                                  },
-                                ),
-                              ],
-                            ),
-                          ]))))
-        ]));
+                                ],
+                              ),
+                            ]))))
+              ]));
   }
 }

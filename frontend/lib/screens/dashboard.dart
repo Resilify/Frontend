@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/widgets/dashboard_box.dart';
+import 'package:frontend/screens/ThriveAndGrowMain.dart';
 
 class Dashboard extends StatelessWidget {
   const Dashboard({super.key});
@@ -37,9 +38,17 @@ class Dashboard extends StatelessWidget {
         const SizedBox(height: 16),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: const [
-            DashboardBox(
-                imagePath: "assets/img/dashboard3.png", label: "thrive & grow"),
+          children: [
+             GestureDetector(
+              onTap: () {
+                Navigator.pushNamed(
+                    context, '/ThriveAndGrow');
+              },
+              child: DashboardBox(
+                imagePath: "assets/img/dashboard3.png",
+                label: "thrive n grow",
+              ),
+            ),
             DashboardBox(
                 imagePath: "assets/img/dashboard4.png", label: "exerciese"),
           ],

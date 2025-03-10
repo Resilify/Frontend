@@ -4,9 +4,12 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.4.2' // Downgrade Gradle plugin version
+        classpath 'com.android.tools.build:gradle:7.4.2'
+        // Add the Google Services Gradle plugin
+        classpath 'com.google.gms:google-services:4.4.2'
     }
 }
+
 allprojects {
     repositories {
         google()
