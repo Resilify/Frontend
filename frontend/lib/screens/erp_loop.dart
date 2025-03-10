@@ -304,7 +304,7 @@ class _ERPLoopPageState extends State<ERPLoopPage> with TickerProviderStateMixin
 },
       child: Scaffold(
         backgroundColor: const Color.fromARGB(255, 224, 213, 236),
-        appBar: AppBar( title: const Text('ERP Loop'), ),
+        appBar: AppBar( title: const Text('ERP Loop Taping'), ),
         body: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
