@@ -41,14 +41,26 @@ const FirebaseOptions firebaseOptions = FirebaseOptions(
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Check platform for Firebase initialization
-  if (Firebase.apps.isEmpty) {
-    await Firebase.initializeApp(options: firebaseOptions);
+  try {
+    // Check if Firebase is already initialized
+    if (Firebase.apps.isEmpty) {
+      await Firebase.initializeApp(options: firebaseOptions);
+      print("Firebase Initialized Successfully.");
+    } else {
+      print("Firebase was already initialized.");
+    }
+  } catch (e) {
+    print("Firebase Initialization Error: $e");
   }
 
-  // Initialize Hive
-  await Hive.initFlutter();
-  await HiveService.initHive();
+  // Initialize Hive safely
+  try {
+    await Hive.initFlutter();
+    await HiveService.initHive();
+    print("Hive Initialized Successfully.");
+  } catch (e) {
+    print("Hive Initialization Error: $e");
+  }
 
   runApp(const Resilify());
 }
@@ -80,13 +92,14 @@ class _ResilifyState extends State<Resilify> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false, // Hide debug banner
       title: "Resilify",
       theme: ThemeData(
         primaryColor: AppColors.primaryColor,
         textTheme: GoogleFonts.interTextTheme(Theme.of(context).textTheme),
       ),
       home: _isLoading 
-          ? Splash() 
+          ? const Splash() 
           : StreamBuilder<User?>(
               stream: _authService.authStateChanges,
               builder: (context, snapshot) {
@@ -94,36 +107,35 @@ class _ResilifyState extends State<Resilify> {
                   User? user = snapshot.data;
                   if (user == null) {
                     // User is not logged in
-                    return Landing();
+                    return const Landing();
                   }
                   // User is logged in
-                  return Home();
+                  return const Home();
                 }
                 // Checking auth state
-                return Splash();
+                return const Splash();
               },
             ),
       routes: {
-        '/landing': (context) => Landing(),
-        '/signin': (context) => Signin(),
-        '/signup': (context) => Signup(),
-        '/home': (context) => Home(),
-        '/erp_loop': (context) => ERPLoopPage(),
-        '/victory': (context) => Victory(),
-        '/game_over': (context) => GameOver(),
-        '/streak': (context) => Streak(),
-        '/halfway_victory': (context) => HalfwayVictory(),
+        '/landing': (context) => const Landing(),
+        '/signin': (context) => const Signin(),
+        '/signup': (context) => const Signup(),
+        '/home': (context) => const Home(),
+        '/erp_loop': (context) => const ERPLoopPage(),
+        '/victory': (context) => const Victory(),
+        '/game_over': (context) => const GameOver(),
+        '/streak': (context) => Streak(),  // Removed const if constructor isn't const
+        '/halfway_victory': (context) => HalfwayVictory(),  // Removed const if constructor isn't const
         // Cognitive Restructuring Routes
-        '/cognitive_input': (context) => CognitiveInputPage(),
-        '/cognitive_reframed': (context) => CognitiveReframedPage(userInput: ""), 
-        '/cognitive_mascot': (context) => CognitiveMascotPage(reframedThought: ""),
-        '/ThriveAndGrow': (context) => ThriveAndGrow(),
-        '/MythBusting': (context) => MythBusting(),
-        '/MotivationalVideos': (context) => MotivationalVideos(),
-        '/SuccessStories': (context) => SuccessStories(),
-        '/SelfCareReward': (context) => SelfCareReward(),
-        '/breathing_exercise': (context) => Breathing(),
-        
+        '/cognitive_input': (context) => const CognitiveInputPage(),
+        '/cognitive_reframed': (context) => const CognitiveReframedPage(userInput: ""), 
+        '/cognitive_mascot': (context) => const CognitiveMascotPage(reframedThought: ""),
+        '/ThriveAndGrow': (context) => const ThriveAndGrow(),
+        '/MythBusting': (context) => const MythBusting(),
+        '/MotivationalVideos': (context) => const MotivationalVideos(),
+        '/SuccessStories': (context) => const SuccessStories(),
+        '/SelfCareReward': (context) => const SelfCareReward(),
+        '/breathing_exercise': (context) => const Breathing(),
       },
     );
   }
