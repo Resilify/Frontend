@@ -24,6 +24,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'services/hive_service.dart';
 import 'services/auth_service.dart';
+import 'package:frontend/screens/breathing.dart';
 
 //save keys where safe ** k3
 const FirebaseOptions firebaseOptions = FirebaseOptions(
@@ -121,6 +122,8 @@ class _ResilifyState extends State<Resilify> {
         '/MotivationalVideos': (context) => MotivationalVideos(),
         '/SuccessStories': (context) => SuccessStories(),
         '/SelfCareReward': (context) => SelfCareReward(),
+        '/breathing_exercise': (context) => Breathing(),
+        
       },
     );
   }
