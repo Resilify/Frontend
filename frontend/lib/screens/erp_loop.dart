@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart'; // to check the platform either web/android
 import 'package:flutter/material.dart'; //ui
 import 'package:frontend/core/constants/app_colors.dart';
+import 'package:frontend/widgets/custom_app_bar.dart';
 import 'package:just_audio/just_audio.dart'; //for audio playback
 import 'package:record/record.dart'; // android voice recording
 import 'package:rive/rive.dart'; //animations
@@ -47,6 +48,7 @@ class _ERPLoopPageState extends State<ERPLoopPage> with TickerProviderStateMixin
   bool paused = false; //game state
   Duration _duration = const Duration(hours: 0, minutes: 20); //default start time of the timer
   bool gameStarted = false; //game state
+  bool gameEnded = false;
   bool balloonVisible = false;
   Timer? _timer; //timer for balloon appearing
   int _stars = 0; //stars collected
@@ -189,8 +191,9 @@ class _ERPLoopPageState extends State<ERPLoopPage> with TickerProviderStateMixin
       _pieAnimationController = PieAnimationController(
       vsync: this,
     );
+    
     setState(() {
-      gameStarted = true; //game starts
+      gameStarted = true; 
     });
     await Future.delayed(Duration(seconds: 1)); //delay to show the timer animation appear
     _startTimer(); // Start the timer animation
@@ -206,7 +209,7 @@ class _ERPLoopPageState extends State<ERPLoopPage> with TickerProviderStateMixin
 
       if (balloonVisible && !paused) {
         Future.delayed(Duration(seconds: 11), () async {
-          if (!gameStarted) {
+          if (gameEnded) {
             timer.cancel();
             return;
           }
@@ -303,8 +306,11 @@ class _ERPLoopPageState extends State<ERPLoopPage> with TickerProviderStateMixin
   return true;
 },
       child: Scaffold(
-        backgroundColor: const Color.fromARGB(255, 224, 213, 236),
-        appBar: AppBar( title: const Text('ERP Loop Taping'), ),
+       // backgroundColor: const Color.fromARGB(255, 224, 213, 236),
+        appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(60),
+        child: CustomAppBar(),
+      ),
         body: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -318,7 +324,7 @@ class _ERPLoopPageState extends State<ERPLoopPage> with TickerProviderStateMixin
                             _audioPlayer.pause(),
                             _stopTalking(),
                             setState(() {
-                              gameStarted = false;
+                              gameEnded = true;
                             }),
                              _stars = 5,
                              _elapsedTime = _duration,
@@ -327,7 +333,7 @@ class _ERPLoopPageState extends State<ERPLoopPage> with TickerProviderStateMixin
                           },
                     )
                   : Text(
-                      "Tap on the mic and speak what's on your mind and tap on the waves again once you're done!",
+                      "Tap on the mic, speak your mind and tap again to stop",
                       style: TextStyle(
                         fontSize: screenWidth * 0.035,
                         fontWeight: FontWeight.bold,
@@ -360,7 +366,7 @@ class _ERPLoopPageState extends State<ERPLoopPage> with TickerProviderStateMixin
                       ElevatedButton(
                         onPressed: !hasRecording || _duration == Duration.zero? null: _startGame,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor:  Color.fromARGB(255, 100, 62, 172).withOpacity(1), 
+                          backgroundColor:  const Color.fromRGBO(138, 109, 198, 1),
                           foregroundColor: Colors.white, ),
                         child: const Text('Loop!'),
                       )

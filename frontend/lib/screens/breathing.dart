@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/core/constants/app_colors.dart';
 import 'package:frontend/screens/breathing_exercise_screen.dart';
 import 'package:frontend/screens/sleep_aid_screen.dart';
+import 'package:frontend/widgets/custom_app_bar.dart';
 
 class Breathing extends StatelessWidget {
   const Breathing({super.key});
@@ -15,6 +16,10 @@ class Breathing extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: AppColors.secondaryColor,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(60),
+        child: CustomAppBar(),
+      ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -22,32 +27,32 @@ class Breathing extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Header Section
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Hello User!',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.primaryTextColor,
-                    ),
-                  ),
-                  Row(
-                    children: [
-                      Icon(Icons.local_fire_department, 
-                           color: AppColors.tertiaryColor),
-                      Text(' 15',
-                           style: TextStyle(color: AppColors.tertiaryColor)),
-                      SizedBox(width: 8),
-                      Icon(Icons.monetization_on, 
-                           color: AppColors.tertiaryColor),
-                      Text(' 280',
-                           style: TextStyle(color: AppColors.tertiaryColor)),
-                    ],
-                  ),
-                ],
-              ),
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //   children: [
+              //     Text(
+              //       'Hello User!',
+              //       style: TextStyle(
+              //         fontSize: 24,
+              //         fontWeight: FontWeight.bold,
+              //         color: AppColors.primaryTextColor,
+              //       ),
+              //     ),
+              //     Row(
+              //       children: [
+              //         Icon(Icons.local_fire_department, 
+              //              color: AppColors.tertiaryColor),
+              //         Text(' 15',
+              //              style: TextStyle(color: AppColors.tertiaryColor)),
+              //         SizedBox(width: 8),
+              //         Icon(Icons.monetization_on, 
+              //              color: AppColors.tertiaryColor),
+              //         Text(' 280',
+              //              style: TextStyle(color: AppColors.tertiaryColor)),
+              //       ],
+              //     ),
+              //   ],
+              // ),
 
               SizedBox(height: 20),
 

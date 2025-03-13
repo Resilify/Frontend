@@ -26,7 +26,7 @@ class PieTimerWidget extends StatelessWidget {
               radius: 50,
               fillColor: const Color.fromARGB(255, 186, 149, 207),
               pieColor: const Color.fromARGB(255, 208, 184, 223),
-              borderColor: const Color.fromARGB(255, 116, 55, 165),
+              borderColor: const Color.fromRGBO(138, 109, 198, 1),
               borderWidth: 3,
               shadowColor: Colors.black,
               shadowElevation: 10.0,

@@ -41,8 +41,8 @@ class _CustomAppBarState extends State<CustomAppBar> {
         children: [
           Row(
             children: [
-              Icon(Icons.person, color: AppColors.primaryTextColor),
-              const SizedBox(width: 8),
+              //Icon(Icons.person, color: AppColors.primaryTextColor),
+             // const SizedBox(width: 8),
               Text("Hello $firstName", style: TextStyle(color: AppColors.primaryTextColor)),
             ],
           ),
@@ -52,16 +52,16 @@ class _CustomAppBarState extends State<CustomAppBar> {
               const SizedBox(width: 4),
               Image.asset(
                 'assets/img/streak.png',
-                height: 30,
-                width: 30,
+                height: 25,
+                width: 25,
               ),
               const SizedBox(width: 10),
               Text("280", style: TextStyle(color: AppColors.primaryTextColor)),
               const SizedBox(width: 4),
               Image.asset(
                 'assets/img/star.png',
-                height: 33,
-                width: 33,
+                height: 30,
+                width: 30,
               ),
             ],
           ),
