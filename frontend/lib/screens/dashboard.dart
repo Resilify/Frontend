@@ -20,7 +20,7 @@ class Dashboard extends StatelessWidget {
               },
               child: DashboardBox(
                 imagePath: "assets/img/dashboard1.png",
-                label: "restructuring",
+                label: "Restructuring",
               ),
             ),
             GestureDetector(
@@ -30,7 +30,7 @@ class Dashboard extends StatelessWidget {
               },
               child: DashboardBox(
                 imagePath: "assets/img/dashboard2.png",
-                label: "loop tape",
+                label: "Loop Tape",
               ),
             ),
           ],
@@ -46,7 +46,7 @@ class Dashboard extends StatelessWidget {
               },
               child: DashboardBox(
                 imagePath: "assets/img/dashboard3.png",
-                label: "thrive n grow",
+                label: "Thrive & Grow",
               ),
             ),
             GestureDetector(
@@ -56,7 +56,7 @@ class Dashboard extends StatelessWidget {
               },
               child: DashboardBox(
                 imagePath: "assets/img/dashboard4.png",
-                label: "exerciese",
+                label: "Exerciese",
               ),
             ),
           ],

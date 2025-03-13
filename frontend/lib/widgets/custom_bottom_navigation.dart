@@ -33,10 +33,6 @@ class CustomBottomNavigationBar extends StatelessWidget {
           label: "Stats",
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.newspaper_rounded),
-          label: "News",
-        ),
-        BottomNavigationBarItem(
           icon: Icon(Icons.person_rounded),
           label: "Profile",
         ),

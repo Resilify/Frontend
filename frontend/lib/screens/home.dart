@@ -17,7 +17,6 @@ class _HomeState extends State<Home> {
   List<Widget> screenList = [
     Dashboard(),
     Text("screen2"),
-    Text("screen3"),
     Profile()
   ];
 
