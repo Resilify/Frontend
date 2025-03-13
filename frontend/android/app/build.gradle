@@ -19,6 +19,7 @@ android {
 
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_1_8
+        freeCompilerArgs += ["-Xno-param-assertions", "-Xno-call-assertions"]
     }
 
     defaultConfig {

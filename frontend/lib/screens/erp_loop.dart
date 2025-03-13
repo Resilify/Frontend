@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart'; // to check the platform either web/android
 import 'package:flutter/material.dart'; //ui
 import 'package:frontend/core/constants/app_colors.dart';
+import 'package:frontend/widgets/custom_app_bar.dart';
 import 'package:just_audio/just_audio.dart'; //for audio playback
 import 'package:record/record.dart'; // android voice recording
 import 'package:rive/rive.dart'; //animations
@@ -16,6 +17,7 @@ import "package:frontend/widgets/timer.dart"; //customised timer widget
 import "package:frontend/widgets/microphone.dart"; //customised mic widget
 import "package:frontend/widgets/mascot.dart"; //mascot widget
 import 'package:frontend/widgets/balloon.dart'; //balloon widget
+import 'package:frontend/services/hive_service.dart';
 class ERPLoopPage extends StatefulWidget {//stateful bc the animations and widgets change states
   const ERPLoopPage({super.key});
   @override
@@ -46,10 +48,11 @@ class _ERPLoopPageState extends State<ERPLoopPage> with TickerProviderStateMixin
   bool paused = false; //game state
   Duration _duration = const Duration(hours: 0, minutes: 20); //default start time of the timer
   bool gameStarted = false; //game state
+  bool gameEnded = false;
   bool balloonVisible = false;
   Timer? _timer; //timer for balloon appearing
   int _stars = 0; //stars collected
-  DateTime? _gameEndTime; //end time of the game- at victory or game over
+  final HiveService _hiveService = HiveService(); //hive service to store data
  
   @override
   void initState() {
@@ -188,42 +191,45 @@ class _ERPLoopPageState extends State<ERPLoopPage> with TickerProviderStateMixin
       _pieAnimationController = PieAnimationController(
       vsync: this,
     );
+    
     setState(() {
-      gameStarted = true; //game starts
+      gameStarted = true; 
     });
     await Future.delayed(Duration(seconds: 1)); //delay to show the timer animation appear
     _startTimer(); // Start the timer animation
-    _timer = Timer.periodic(Duration(seconds: 20), (timer) { //timer to make balloons appear
-      if (!gameStarted) {
-        timer.cancel();
-        return;
-  }
-  setState(() {
-    balloonVisible = true;
-  });
-
-  if (balloonVisible && !paused) {
-    Future.delayed(Duration(seconds: 11), () async {
+    _timer = Timer.periodic(Duration(seconds: 20), (timer) {
+      //timer to make balloons appear
       if (!gameStarted) {
         timer.cancel();
         return;
       }
-      if (balloonVisible) {
-        timer.cancel();
-        _pauseGame();
-        _elapsedTime = DateTime.now().difference(_startTime!);
-        _gameEndTime = DateTime.now();
-        
-        if (_elapsedTime.inMilliseconds < _duration.inMilliseconds / 2) {
-          Navigator.pushReplacementNamed(context, '/game_over');
-        } else {
-          _stars = 3;
-          Navigator.pushReplacementNamed(context, '/halfway_victory');
-        }
+      setState(() {
+        balloonVisible = true;
+      });
+
+      if (balloonVisible && !paused) {
+        Future.delayed(Duration(seconds: 11), () async {
+          if (gameEnded) {
+            timer.cancel();
+            return;
+          }
+          if (balloonVisible) {
+            timer.cancel();
+            _pauseGame();
+            _elapsedTime = DateTime.now().difference(_startTime!);
+
+            if (_elapsedTime.inMilliseconds < _duration.inMilliseconds / 2) {
+              _hiveService.saveGameSession(timePlayed: _startTime!, duration: _elapsedTime.inMinutes, points: _stars);
+              Navigator.pushReplacementNamed(context, '/game_over');
+            } else {
+              _stars = 3;
+              _hiveService.saveGameSession(timePlayed: _startTime!, duration: _elapsedTime.inMinutes, points: _stars);
+              Navigator.pushReplacementNamed(context, '/halfway_victory');
+            }
+          }
+        });
       }
     });
-  }
-});
     while (_elapsedTime < _duration) {//while the set duration is met
       if (!kIsWeb) {//if android
         await _audioPlayer.setFilePath(recordingPath!);
@@ -273,11 +279,9 @@ class _ERPLoopPageState extends State<ERPLoopPage> with TickerProviderStateMixin
       onWillPop: () async {
   if (gameStarted) {
     _pauseGame(); // Pause game state if it's running
-
     String exitRoute = _elapsedTime.inMilliseconds < _duration.inMilliseconds / 2
         ? '/game_over'
         : '/halfway_victory';
-
     // Show the exit confirmation dialog and handle navigation based on user confirmation
     bool shouldPop = await showExitConfirmationDialog(
       context,
@@ -286,11 +290,10 @@ class _ERPLoopPageState extends State<ERPLoopPage> with TickerProviderStateMixin
         if (userConfirmedExit) {
           // Perform the actions if the user confirmed exit
           _audioPlayer.pause();
-          _gameEndTime = DateTime.now();
           if (_elapsedTime.inMilliseconds > _duration.inMilliseconds / 2) {
             _stars = 3;
           }
-          // Send data (stars, elapsed time, etc.)
+          _hiveService.saveGameSession(timePlayed: _startTime!, duration: _elapsedTime.inMinutes, points: _stars);
           Navigator.pushReplacementNamed(context, exitRoute); // Navigate to the exit route
         } else {
           // Perform actions if the user canceled exit
@@ -303,8 +306,11 @@ class _ERPLoopPageState extends State<ERPLoopPage> with TickerProviderStateMixin
   return true;
 },
       child: Scaffold(
-        backgroundColor: const Color.fromARGB(255, 224, 213, 236),
-        appBar: AppBar( title: const Text('ERP Loop Taping'), ),
+       // backgroundColor: const Color.fromARGB(255, 224, 213, 236),
+        appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(60),
+        child: CustomAppBar(),
+      ),
         body: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -318,17 +324,16 @@ class _ERPLoopPageState extends State<ERPLoopPage> with TickerProviderStateMixin
                             _audioPlayer.pause(),
                             _stopTalking(),
                             setState(() {
-                              gameStarted = false;
+                              gameEnded = true;
                             }),
                              _stars = 5,
                              _elapsedTime = _duration,
-                              _gameEndTime = DateTime.now(),
-                             //send stars, elpased time, start time, end time
+                             _hiveService.saveGameSession(timePlayed: _startTime!, duration: _elapsedTime.inMinutes, points: _stars),
                             Navigator.pushReplacementNamed(context, '/victory'),
                           },
                     )
                   : Text(
-                      "Tap on the mic and speak what's on your mind!",
+                      "Tap on the mic, speak your mind and tap again to stop",
                       style: TextStyle(
                         fontSize: screenWidth * 0.035,
                         fontWeight: FontWeight.bold,
@@ -361,7 +366,7 @@ class _ERPLoopPageState extends State<ERPLoopPage> with TickerProviderStateMixin
                       ElevatedButton(
                         onPressed: !hasRecording || _duration == Duration.zero? null: _startGame,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor:  Color.fromARGB(255, 100, 62, 172).withOpacity(1), 
+                          backgroundColor:  const Color.fromRGBO(138, 109, 198, 1),
                           foregroundColor: Colors.white, ),
                         child: const Text('Loop!'),
                       )

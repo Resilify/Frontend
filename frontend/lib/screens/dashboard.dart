@@ -49,8 +49,16 @@ class Dashboard extends StatelessWidget {
                 label: "thrive n grow",
               ),
             ),
-            DashboardBox(
-                imagePath: "assets/img/dashboard4.png", label: "exerciese"),
+            GestureDetector(
+              onTap: () {
+                Navigator.pushNamed(
+                    context, '/breathing_exercise');
+              },
+              child: DashboardBox(
+                imagePath: "assets/img/dashboard4.png",
+                label: "exerciese",
+              ),
+            ),
           ],
         ),
       ],

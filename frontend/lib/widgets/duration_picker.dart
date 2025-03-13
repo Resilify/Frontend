@@ -27,7 +27,7 @@ class _DurationPickerWidgetState extends State<DurationPickerWidget> {
         },
         duration: widget.duration,
         circleColor: const Color.fromARGB(255, 179, 144, 206).withOpacity(0.5),
-        progressColor: const Color.fromRGBO(100, 62, 172, 1).withOpacity(1),
+        progressColor: const Color.fromRGBO(138, 109, 198, 1),
         backgroundColor: const Color.fromARGB(255, 210, 200, 214).withOpacity(0.5),
       ),
     );

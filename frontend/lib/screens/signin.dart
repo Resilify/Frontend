@@ -87,85 +87,74 @@ class _SigninState extends State<Signin> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.primaryColor,
-      body: _isLoading 
-          ? Center(child: CircularProgressIndicator(color: Colors.white))
-          : Column(
-              children: [
-                // above section and image
-                Padding(
-                  padding: const EdgeInsets.only(top: 80),
-                  child: Center(
-                    child: Image.asset('assets/img/logo_2.png'),
-                  ),
+ @override
+Widget build(BuildContext context) {
+  return Scaffold(
+    backgroundColor: AppColors.primaryColor,
+    body: _isLoading
+        ? Center(child: CircularProgressIndicator(color: Colors.white))
+        : Column(
+            children: [
+              // Above section and image
+              Padding(
+                padding: const EdgeInsets.only(top: 80),
+                child: Center(
+                  child: Image.asset('assets/img/logo_2.png'),
                 ),
+              ),
 
-                //rest of the screen components
-                Expanded(
-                  child: Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: AppColors.secondaryColor,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(50),
-                        topRight: Radius.circular(50),
-                      ),
+              // Expanded section for scrolling content
+              Expanded(
+                child: Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: Colors.white, // Makes bottom part white
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(50),
+                      topRight: Radius.circular(50),
                     ),
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 30, top: 50, right: 30),
-
-                      // title and rest of the details in coloum format
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Text(
-                            "Sign in",
-                            style: TextStyle(
+                  ),
+                  child: SafeArea( // Avoids overlapping with system UI
+                    child: SingleChildScrollView(
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 30, right: 30, bottom: 30),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Text(
+                              "Sign in",
+                              style: TextStyle(
                                 fontSize: 32,
                                 fontWeight: FontWeight.bold,
-                                color: AppColors.primaryTextColor),
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
+                                color: AppColors.primaryTextColor,
+                              ),
+                            ),
+                            SizedBox(height: 20),
 
-                          // textfields
-                          Form(
-                            key: _formkey,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                // text
-                                CustomLabel(text: "Email"),
-
-                                // input feild for email
-                                CustomTextField(
-                                  hintText: "Enter email",
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return "Please enter your email";
-                                    } else if (!RegExp(
-                                            r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")
-                                        .hasMatch(value)) {
-                                      return "Please enter a valid email address";
-                                    }
-                                    return null;
-                                  },
-                                  controller: emailController,
-                                ),
-
-                                SizedBox(
-                                  height: 15,
-                                ),
-
-                                // text
-                                CustomLabel(text: "Password"),
-
-                                // input feild for password
-                                CustomTextField(
+                            // Textfields
+                            Form(
+                              key: _formkey,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  CustomLabel(text: "Email"),
+                                  CustomTextField(
+                                    hintText: "Enter email",
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return "Please enter your email";
+                                      } else if (!RegExp(
+                                              r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")
+                                          .hasMatch(value)) {
+                                        return "Please enter a valid email address";
+                                      }
+                                      return null;
+                                    },
+                                    controller: emailController,
+                                  ),
+                                  SizedBox(height: 15),
+                                  CustomLabel(text: "Password"),
+                                  CustomTextField(
                                     controller: passwordController,
                                     validator: (value) {
                                       if (value == null || value.isEmpty) {
@@ -174,56 +163,57 @@ class _SigninState extends State<Signin> {
                                       return null;
                                     },
                                     hintText: "Enter password",
-                                    hasAsteriks: true),
+                                    hasAsteriks: true,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                TextButton(
+                                  child: Text(
+                                    "Forgot password?",
+                                    style: TextStyle(fontWeight: FontWeight.w100),
+                                  ),
+                                  onPressed: () => _resetPassword(context),
+                                ),
                               ],
                             ),
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              TextButton(
-                                child: Text(
-                                  "Forgot password?",
-                                  style: TextStyle(fontWeight: FontWeight.w100),
-                                ),
-                                onPressed: () => _resetPassword(context),
-                              ),
-                            ],
-                          ),
-                          CustomButton(
-                              text: "Sign in",
-                              onPress: () => signin(context)),
+                            CustomButton(
+                                text: "Sign in",
+                                onPress: () => signin(context)),
 
-                          SizedBox(
-                            height: 24,
-                          ),
+                            SizedBox(height: 24),
 
-                          // navigate to sign up
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                "Do not have an account?",
-                                style: TextStyle(color: AppColors.primaryTextColor),
-                              ),
-                              TextButton(
-                                child: Text(
-                                  "SIGN UP",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w900,
-                                      color: AppColors.primaryTextColor),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "Do not have an account?",
+                                  style: TextStyle(color: AppColors.primaryTextColor),
                                 ),
-                                onPressed: () => _signup(context),
-                              ),
-                            ],
-                          ),
-                        ],
+                                TextButton(
+                                  child: Text(
+                                    "SIGN UP",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.w900,
+                                        color: AppColors.primaryTextColor),
+                                  ),
+                                  onPressed: () => _signup(context),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ],
-            ),
-    );
-  }
+              ),
+            ],
+          ),
+  );
+}
+
 }
