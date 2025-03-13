@@ -17,24 +17,21 @@ class GameDataAdapter extends TypeAdapter<GameData> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return GameData(
-      gameId: fields[0] as String,
-      timePlayed: fields[1] as DateTime,
-      duration: fields[2] as int,
-      points: fields[3] as int,
+      timePlayed: fields[0] as DateTime,
+      duration: fields[1] as int,
+      points: fields[2] as int,
     );
   }
 
   @override
   void write(BinaryWriter writer, GameData obj) {
     writer
-      ..writeByte(4)
-      ..writeByte(0)
-      ..write(obj.gameId)
-      ..writeByte(1)
-      ..write(obj.timePlayed)
-      ..writeByte(2)
-      ..write(obj.duration)
       ..writeByte(3)
+      ..writeByte(0)
+      ..write(obj.timePlayed)
+      ..writeByte(1)
+      ..write(obj.duration)
+      ..writeByte(2)
       ..write(obj.points);
   }
 
